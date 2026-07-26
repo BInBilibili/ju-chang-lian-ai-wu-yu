@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -19,7 +19,7 @@ body{width:100vw;height:100vh;overflow:hidden;background:#000;font-family:'Noto 
 #m{display:flex;align-items:center;justify-content:center;z-index:5;background:#080c16}
 .map-inner{position:relative;height:92%;aspect-ratio:2272/1984}
 .map-inner img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain}
-.map-overlay{position:absolute;top:0;left:0;width:100%;height:100%}
+.map-overlay{position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;transition:opacity .3s}.map-overlay.ready{opacity:1}
 .ct{cursor:pointer}
 .ct:hover{opacity:.8}
 .ov{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:6;background:rgba(16,16,32,.95);border:1px solid rgba(255,200,210,.3);border-radius:12px;padding:28px 40px;text-align:center;opacity:0;pointer-events:none;transition:opacity .3s}
@@ -46,7 +46,7 @@ body{width:100vw;height:100vh;overflow:hidden;background:#000;font-family:'Noto 
   </div>
   <div id="m" class="l h">
     <div class="map-inner">
-      <img src="map.png" alt="中国地图">
+      <img src="map.jpg" id="map-img" onload="document.querySelector('.map-overlay').classList.add('ready')" alt="中国地图">
       <svg viewBox="0 0 2272 1984" class="map-overlay">
         <g class="ct" data-city="beijing">
           <circle cx="1394" cy="790" r="24" fill="#ff4444" stroke="#fff" stroke-width="3" opacity=".9"/>
