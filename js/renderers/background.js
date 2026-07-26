@@ -54,7 +54,6 @@ const BackgroundRenderer = {
     }
     
     const img = new Image();
-    img.crossOrigin = 'anonymous';
     
     img.onload = () => {
       this.imageCache[imgPath] = img;
