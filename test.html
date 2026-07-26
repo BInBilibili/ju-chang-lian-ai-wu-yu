@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>测试页面</title>
+<style>
+body { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #1a1028; color: white; font-family: sans-serif; }
+.btn { padding: 14px 52px; font-size: 18px; cursor: pointer; background: transparent; border: 1px solid #ffcad4; color: #ffcad4; border-radius: 6px; }
+.btn:hover { background: rgba(255, 200, 210, 0.1); }
+#debug { margin-top: 20px; color: #888; font-size: 14px; }
+</style>
+</head>
+<body>
+<h1>测试页面</h1>
+<button class="btn" id="start-btn">开 始 游 戏</button>
+<div id="debug"></div>
+
+<script>
+const debug = document.getElementById('debug');
+const startBtn = document.getElementById('start-btn');
+
+function log(msg) {
+  debug.innerHTML += msg + '<br>';
+  console.log(msg);
+}
+
+log('脚本已加载');
+log('按钮元素:', startBtn);
+
+startBtn.addEventListener('click', () => {
+  log('按钮被点击！');
+  alert('按钮点击成功！');
+});
+</script>
+</body>
+</html>
