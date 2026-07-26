@@ -469,7 +469,7 @@ function restart() {
 
 $("#start-btn").addEventListener("click", function() {
   titleScreen.classList.add("hidden");
-  setTimeout(function() { startScene("start"); }, 400);
+  setTimeout(function() { startScene(story.start); }, 400);
 });
 
 $("#restart-btn").addEventListener("click", restart);
