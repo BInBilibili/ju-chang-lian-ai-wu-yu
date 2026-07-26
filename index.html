@@ -93,7 +93,7 @@ var stories={
 
 g('start-btn').addEventListener('click',function(){L.t.classList.add('h');setTimeout(function(){L.m.classList.remove('h')},400)})
 
-document.querySelectorAll('#china-svg .city').forEach(function(el){el.addEventListener('click',function(){pick(el.dataset.city)})})})})
+document.querySelectorAll('#china-svg .city').forEach(function(el){el.addEventListener('click',function(){pick(el.dataset.city)})})
 
 function pick(c){city=c;document.querySelectorAll('.city').forEach(function(e){e.classList.remove('on')});L.ovm.textContent='出发去'+stories[c].title+'？';L.ov.classList.add('on')}
 g('ov-yes').addEventListener('click',function(){L.ov.classList.remove('on');scene=0;line=0;typing=false;L.m.classList.add('h');L.d.classList.remove('h');nxt()})
