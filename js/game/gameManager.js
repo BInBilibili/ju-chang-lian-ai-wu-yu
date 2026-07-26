@@ -135,6 +135,12 @@ const GameManager = {
     const scene = story.scenes[GameState.currentScene];
     if (!scene) return;
     
+    // 如果是选项场景，显示选项
+    if (scene.choices) {
+      this.showChoices(scene);
+      return;
+    }
+    
     GameState.currentLineIndex++;
     
     if (GameState.currentLineIndex >= scene.lines.length) {
@@ -155,6 +161,25 @@ const GameManager = {
     }
     
     this.showLine(scene.lines[GameState.currentLineIndex], scene);
+  },
+  
+  showChoices(scene) {
+    DOM.choicesLayer.innerHTML = '';
+    
+    scene.choices.forEach(choice => {
+      const btn = document.createElement('button');
+      btn.className = 'choice-btn';
+      btn.textContent = choice.text;
+      btn.onclick = () => {
+        DOM.choicesLayer.classList.remove('active');
+        GameState.currentScene = choice.next;
+        GameState.currentLineIndex = 0;
+        this.enterScene(choice.next);
+      };
+      DOM.choicesLayer.appendChild(btn);
+    });
+    
+    DOM.choicesLayer.classList.add('active');
   },
   
   showEnding(ending) {
