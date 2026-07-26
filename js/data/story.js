@@ -11,7 +11,7 @@ const StoryData = {
           { speaker: '', text: '周一早会，主管说部门来了一位新人。' },
           { speaker: '', text: '你趴在桌上打哈欠，对这种例行介绍毫无期待。' },
           { speaker: '', text: '直到门被推开——' },
-          { speaker: '', text: '进来的姑娘戴着一顶夸张的大红色帽子，穿着蓝白相间的宽大袍子。' },
+          { speaker: '', text: '进来的姑娘戴着一顶带有桃子的帽子，穿着一身奇怪的制服。' },
           { speaker: '', text: '她手里还举着一把装饰用的"要石"道具。' },
           { speaker: '', text: '她走到台前，清了清嗓子，开口就是：' },
           { speaker: '', text: '「教えて 教えてよ——」' },
@@ -40,7 +40,7 @@ const StoryData = {
         character: 'yaner',
         charExpression: 'excited',
         lines: [
-          { speaker: '', text: '午休时，你主动端着饭盒走向那个戴着红色帽子的女孩。' },
+          { speaker: '', text: '午休时，你主动端着饭盒走向那个戴着帽子的女孩。' },
           { speaker: '嫣儿', text: '啊！你来了！你是第一个主动找我说话的人！' },
           { speaker: '嫣儿', text: '我叫嫣儿！你叫什么？你是做什么的呀？运营？策划？' },
           { speaker: '嫣儿', text: '你喜欢东方吗？你看Vtuber吗？' },
@@ -68,7 +68,7 @@ const StoryData = {
         character: null,
         charExpression: 'neutral',
         lines: [
-          { speaker: '', text: '午休时，你刻意避开了那个戴着红色帽子的女孩。' },
+          { speaker: '', text: '午休时，你刻意避开了那个戴着帽子的女孩。' },
           { speaker: '', text: '她太怪了，你不想和这种人有交集。' },
           { speaker: '', text: '但不知为何，你总是忍不住偷偷瞄向她的方向。' },
         ],
@@ -554,6 +554,7 @@ const StoryData = {
         lines: [
           { speaker: '', text: '她推了推眼镜，眼神中带着一丝疲惫，但更多的是热情。' },
           { speaker: '虚叶', text: '这条线还没设定好' },
+          { speaker: '丛雨', text: '这条线也还没设定好' },
         ],
         ending: {
           title: '深夜咖啡',
