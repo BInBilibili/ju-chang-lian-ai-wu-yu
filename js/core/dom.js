@@ -1,5 +1,8 @@
 const DOM = {
   container: document.getElementById('game-container'),
+  loadingScreen: document.getElementById('loading-screen'),
+  progressBar: document.getElementById('progress-bar'),
+  progressText: document.getElementById('progress-text'),
   titleScreen: document.getElementById('title-screen'),
   mapScreen: document.getElementById('map-screen'),
   dialogueBox: document.getElementById('dialogue-box'),

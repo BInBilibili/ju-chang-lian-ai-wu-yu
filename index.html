@@ -12,7 +12,18 @@
   <canvas id="bg-canvas"></canvas>
   <img id="char-image" class="character-image" src="" onerror="this.onerror=null; this.src='';" />
   
-  <div id="title-screen" class="layer active">
+  <div id="loading-screen" class="layer active">
+    <div class="loading-content">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">正在加载资源...</div>
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+      <div class="progress-text" id="progress-text">0%</div>
+    </div>
+  </div>
+  
+  <div id="title-screen" class="layer">
     <h1>菊厂恋爱物语</h1>
     <div class="subtitle">HW Love Story</div>
     <button class="btn" id="start-btn">开 始 游 戏</button>
@@ -57,6 +68,7 @@
 <script src="js/core/state.js"></script>
 <script src="js/core/sceneManager.js"></script>
 <script src="js/core/typewriter.js"></script>
+<script src="js/core/resourceLoader.js"></script>
 <script src="js/renderers/background.js"></script>
 <script src="js/renderers/character.js"></script>
 <script src="js/renderers/map.js"></script>

@@ -1,4 +1,6 @@
 const GameManager = {
+  resourcesLoaded: false,
+  
   init() {
     BackgroundRenderer.init();
     CharacterRenderer.init();
@@ -13,38 +15,47 @@ const GameManager = {
         this.handleDialogueClick();
       }
     });
+    
+    // 开始预加载资源
+    this.startResourceLoading();
+  },
+  
+  startResourceLoading() {
+    ResourceLoader.init(
+      (progress, loaded, total) => {
+        DOM.progressBar.style.width = `${progress}%`;
+        DOM.progressText.textContent = `${progress}% (${loaded}/${total})`;
+      },
+      (resources) => {
+        this.onResourcesLoaded(resources);
+      }
+    );
+    ResourceLoader.start();
+  },
+  
+  onResourcesLoaded(resources) {
+    this.resourcesLoaded = true;
+    
+    // 将预加载的图片传递给渲染器
+    BackgroundRenderer.setPreloadedImages(resources);
+    CharacterRenderer.setPreloadedImages(resources);
+    
+    // 隐藏加载界面，显示标题界面
+    setTimeout(() => {
+      SceneManager.show('title');
+    }, 500);
   },
   
   startGame() {
+    if (!this.resourcesLoaded) {
+      console.log('Resources not loaded yet');
+      return;
+    }
+    
     GameState.reset();
-    
-    // 显示加载状态
-    DOM.startBtn.textContent = '加载中...';
-    DOM.startBtn.disabled = true;
-    
-    // 动态加载ECharts和地图数据
-    this.loadScript('js/echarts.min.js', () => {
-      this.loadScript('js/china.js', () => {
-        SceneManager.show('map');
-        MapRenderer.init();
-        CharacterRenderer.hide();
-        
-        // 恢复按钮状态
-        DOM.startBtn.textContent = '开 始 游 戏';
-        DOM.startBtn.disabled = false;
-      });
-    });
-  },
-  
-  loadScript(src, callback) {
-    const script = document.createElement('script');
-    script.src = src;
-    script.onload = callback;
-    script.onerror = () => {
-      console.error(`Failed to load ${src}`);
-      callback();
-    };
-    document.head.appendChild(script);
+    SceneManager.show('map');
+    MapRenderer.init();
+    CharacterRenderer.hide();
   },
   
   restartGame() {

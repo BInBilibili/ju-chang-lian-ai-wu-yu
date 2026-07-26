@@ -13,6 +13,7 @@ const CharacterRenderer = {
     'yaner_grateful': 'images/嫣儿_感激.png',
     'xuye': 'images/虚叶.png',
   },
+  preloadedImages: {},
   
   init() {
     if (DOM.charImage) {
@@ -33,6 +34,10 @@ const CharacterRenderer = {
     }
   },
   
+  setPreloadedImages(images) {
+    this.preloadedImages = images;
+  },
+  
   draw(characterId, expression = 'neutral', grayscale = false) {
     if (!DOM.charImage) return;
     
@@ -50,7 +55,14 @@ const CharacterRenderer = {
       return;
     }
     
-    DOM.charImage.src = imagePath;
+    // 尝试使用预加载的图片
+    const preloadId = characterId === 'yaner' ? 'char_yaner' : null;
+    if (preloadId && this.preloadedImages[preloadId]) {
+      DOM.charImage.src = this.preloadedImages[preloadId].src;
+    } else {
+      DOM.charImage.src = imagePath;
+    }
+    
     DOM.charImage.classList.add('visible');
     
     DOM.charImage.style.filter = grayscale ? 'grayscale(100%)' : 'none';

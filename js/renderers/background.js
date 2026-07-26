@@ -12,6 +12,7 @@ const BackgroundRenderer = {
     'hotel_room': 'images/bg_hotel_room.jpg',
   },
   imageCache: {},
+  preloadedImages: {},
   
   init() {
     if (DOM.bgCanvas) {
@@ -26,11 +27,20 @@ const BackgroundRenderer = {
     DOM.bgCanvas.height = window.innerHeight;
   },
   
+  setPreloadedImages(images) {
+    this.preloadedImages = images;
+  },
+  
   draw(id) {
     if (!this.ctx) return;
     const w = DOM.bgCanvas.width;
     const h = DOM.bgCanvas.height;
     this.ctx.clearRect(0, 0, w, h);
+    
+    // 尝试使用预加载的图片
+    if (this.tryDrawPreloadedImage(id, w, h)) {
+      return;
+    }
     
     // 尝试加载jpg图片
     const imgPath = this.bgImages[id];
@@ -41,6 +51,28 @@ const BackgroundRenderer = {
     
     // 默认渐变背景
     this.drawGradient(id, w, h);
+  },
+  
+  tryDrawPreloadedImage(id, w, h) {
+    // 根据场景ID查找预加载的图片
+    const preloadIdMap = {
+      'airport': 'bg_airport',
+      'office': 'bg_office',
+      'office_canteen': 'bg_office_canteen',
+      'office_desk': 'bg_office_desk',
+      'office_desk_night': 'bg_office_desk_night',
+      'apartment': 'bg_apartment',
+      'apartment_night': 'bg_apartment_night',
+      'bus': 'bg_bus',
+      'hotel_room': 'bg_hotel_room',
+    };
+    
+    const preloadId = preloadIdMap[id];
+    if (preloadId && this.preloadedImages[preloadId]) {
+      this.ctx.drawImage(this.preloadedImages[preloadId], 0, 0, w, h);
+      return true;
+    }
+    return false;
   },
   
   loadAndDrawImage(imgPath, w, h, fallbackId) {
