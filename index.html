@@ -16,14 +16,12 @@ body{width:100vw;height:100vh;overflow:hidden;background:#000;font-family:'Noto 
 #t .sub{font-size:16px;color:rgba(200,180,200,.5);letter-spacing:.15em;margin-bottom:48px}
 .btn{background:transparent;color:#ffd0dc;border:1.5px solid rgba(255,200,210,.4);padding:14px 52px;font-size:18px;font-family:inherit;letter-spacing:.1em;border-radius:6px;cursor:pointer;transition:all .4s}
 .btn:hover{background:rgba(255,180,200,.12);border-color:rgba(255,200,210,.7);box-shadow:0 0 30px rgba(200,140,170,.25)}
-#m{display:flex;align-items:center;justify-content:center;z-index:5;background:radial-gradient(ellipse at center,#141e2e,#080c16)}
-#m svg{width:90%;height:90%}
-.land{fill:#1a2840;stroke:#3a5070;stroke-width:1.5}
-.ct{cursor:pointer;transition:transform .25s}
-.ct:hover{transform:scale(1.35)}
-.ct.on{transform:scale(1.4)}
-.dot{fill:#ff4444;stroke:#fff;stroke-width:2}
-.lbl{fill:#ff6b6b;font-size:15px;pointer-events:none}
+#m{display:flex;align-items:center;justify-content:center;z-index:5;background:#080c16}
+.map-inner{position:relative;height:92%;aspect-ratio:2272/1984}
+.map-inner img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain}
+.map-overlay{position:absolute;top:0;left:0;width:100%;height:100%}
+.ct{cursor:pointer}
+.ct:hover{opacity:.8}
 .ov{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:6;background:rgba(16,16,32,.95);border:1px solid rgba(255,200,210,.3);border-radius:12px;padding:28px 40px;text-align:center;opacity:0;pointer-events:none;transition:opacity .3s}
 .ov.on{opacity:1;pointer-events:auto}
 .ov p{color:#e8d5e0;font-size:18px;margin-bottom:20px}
@@ -47,24 +45,28 @@ body{width:100vw;height:100vh;overflow:hidden;background:#000;font-family:'Noto 
     <button class="btn" id="start-btn">开 始 游 戏</button>
   </div>
   <div id="m" class="l h">
-    <svg viewBox="0 0 900 750">
-      <polygon class="land" points="720,85 740,115 760,105 775,125 765,150 780,160 770,180 750,190 760,215 740,235 730,265 745,285 735,305 750,325 740,355 755,375 745,395 760,415 750,435 765,455 755,475 770,495 760,515 775,535 760,555 780,575 420,585 405,565 365,580 355,560 305,570 295,550 245,560 235,540 185,550 175,530 145,540 135,520 105,530 95,510 75,515 65,495 85,475 115,465 125,445 155,435 175,415 195,405 185,385 205,375 225,355 245,345 265,325 285,315 305,285 325,275 345,265 375,255 395,235 425,225 455,210 485,200 515,190 545,180 575,170 605,160 635,150 665,140 685,120 705,100 720,85"/>
-      <g class="ct" id="bj" transform="translate(550,175)">
-        <circle cx="0" cy="0" r="10" fill="none" stroke="#ff4444" stroke-width="2" opacity=".6"/>
-        <circle cx="0" cy="0" r="8" fill="#ff4444" stroke="#fff" stroke-width="2"/>
-        <text class="lbl" x="16" y="5">北京</text>
-      </g>
-      <g class="ct" id="sz" transform="translate(420,420)">
-        <circle cx="0" cy="0" r="8" fill="#ff4444" stroke="#fff" stroke-width="2"/>
-        <text class="lbl" x="16" y="5">深圳</text>
-      </g>
-    </svg>
+    <div class="map-inner">
+      <img src="map.png" alt="中国地图">
+      <svg viewBox="0 0 2272 1984" class="map-overlay">
+        <g class="ct" data-city="beijing">
+          <circle cx="1394" cy="790" r="24" fill="#ff4444" stroke="#fff" stroke-width="3" opacity=".9"/>
+          <circle cx="1394" cy="790" r="36" fill="none" stroke="#ff4444" stroke-width="2" opacity=".5"/>
+          <text x="1430" y="798" fill="#ff6b6b" font-size="24" font-family="Noto Sans SC,sans-serif" font-weight="700">北京</text>
+        </g>
+        <g class="ct" data-city="shenzhen">
+          <circle cx="1274" cy="1764" r="24" fill="#ff4444" stroke="#fff" stroke-width="3" opacity=".9"/>
+          <circle cx="1274" cy="1764" r="36" fill="none" stroke="#ff4444" stroke-width="2" opacity=".5"/>
+          <text x="1310" y="1772" fill="#ff6b6b" font-size="24" font-family="Noto Sans SC,sans-serif" font-weight="700">深圳</text>
+        </g>
+      </svg>
+    </div>
     <div id="ov" class="ov">
       <p id="ov-msg"></p>
       <button class="btn" id="ov-yes" style="padding:10px 28px;font-size:15px;margin-right:8px">出发</button>
       <button class="btn" id="ov-no" style="padding:10px 28px;font-size:15px">再想想</button>
     </div>
   </div>
+</div>
   <div id="d" class="l h">
     <div id="tg"></div>
     <div id="bx">
@@ -103,10 +105,9 @@ var stories={
 
 g('start-btn').addEventListener('click',function(){L.t.classList.add('h');setTimeout(function(){L.m.classList.remove('h')},400)})
 
-g('bj').addEventListener('click',function(){pick('beijing',this)})
-g('sz').addEventListener('click',function(){pick('shenzhen',this)})
+document.querySelectorAll('.map-overlay .ct').forEach(function(el){el.addEventListener('click',function(){pick(el.dataset.city)})})
 
-function pick(c,el){city=c;document.querySelectorAll('.ct').forEach(function(e){e.classList.remove('on')});el.classList.add('on');L.ovm.textContent='出发去'+stories[c].title+'？';L.ov.classList.add('on')}
+function pick(c){city=c;document.querySelectorAll('.ct').forEach(function(e){e.classList.remove('on')});L.ovm.textContent='出发去'+stories[c].title+'？';L.ov.classList.add('on')}
 g('ov-yes').addEventListener('click',function(){L.ov.classList.remove('on');scene=0;line=0;typing=false;L.m.classList.add('h');L.d.classList.remove('h');nxt()})
 g('ov-no').addEventListener('click',function(){L.ov.classList.remove('on');document.querySelectorAll('.ct').forEach(function(e){e.classList.remove('on')})})
 
