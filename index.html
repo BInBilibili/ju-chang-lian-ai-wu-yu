@@ -448,7 +448,7 @@ function showChoices(scene) {
   });
 }
 
-function hideChoices() { game.inChoice = false; choicesLayer.classList.remove("active"); }
+function hideChoices() { game.inChoice = false; choicesLayer.classList.remove("active"); choicesLayer.innerHTML = ""; }
 
 function chooseOption(scene, idx) { hideChoices(); dialogueText.textContent = ''; startScene(scene.options[idx].next); }
 
