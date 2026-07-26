@@ -1,67 +1,4 @@
-(function drawBackground() {
-  const c = document.getElementById("bg-canvas");
-  const ctx = c.getContext("2d");
-  const W = 1280, H = 720;
-  function resize() {
-    const scale = Math.max(c.parentElement.clientWidth / W, c.parentElement.clientHeight / H);
-    c.width = W; c.height = H;
-  }
-  resize();
-  window.addEventListener("resize", resize);
-  var sky = ctx.createLinearGradient(0, 0, 0, H);
-  sky.addColorStop(0, "#2d1b3d"); sky.addColorStop(0.3, "#4a2c5e");
-  sky.addColorStop(0.55, "#8b4557"); sky.addColorStop(0.75, "#c46d5a");
-  sky.addColorStop(0.9, "#e8956b"); sky.addColorStop(1, "#f0b87a");
-  ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
-  var stars = [[120,45],[340,32],[560,60],[780,25],[950,55],[1080,40],[200,80],[890,70],[1050,15],[420,50]];
-  stars.forEach(function(s) {
-    ctx.globalAlpha = 0.3 + Math.random() * 0.5;
-    ctx.beginPath(); ctx.arc(s[0], s[1], 1.2, 0, Math.PI * 2); ctx.fill();
-    ctx.globalAlpha = 0.15 + Math.random() * 0.2;
-    ctx.beginPath(); ctx.arc(s[0] + 2, s[1] + 2, 0.6, 0, Math.PI * 2); ctx.fill();
-  });
-  ctx.globalAlpha = 1;
-  var buildings = [[0,320],[60,280],[140,310],[220,260],[310,300],[380,275],[470,315],[540,250],[620,295],[700,270],[780,310],[860,255],[940,290],[1020,265],[1100,300],[1180,280]];
-  buildings.forEach(function(b, i) {
-    var w = 70 + (i % 3) * 20;
-    var h = H * 0.65 - b[1];
-    ctx.fillStyle = "#1a112a"; ctx.fillRect(b[0], b[1], w + 10, h);
-    for (var wy = b[1] + 20; wy < b[1] + h - 20; wy += 30) {
-      for (var wx = b[0] + 8; wx < b[0] + w; wx += 20) {
-        if (Math.random() > 0.3) {
-          ctx.fillStyle = "rgba(255, 200, 150, " + (0.1 + Math.random() * 0.3) + ")";
-          ctx.fillRect(wx, wy, 10, 14);
-        }
-      }
-    }
-  });
-  var ground = ctx.createLinearGradient(0, H * 0.6, 0, H);
-  ground.addColorStop(0, "#2a1e2e"); ground.addColorStop(0.5, "#1c1522"); ground.addColorStop(1, "#100c16");
-  ctx.fillStyle = ground; ctx.fillRect(0, H * 0.6, W, H * 0.4);
-  ctx.strokeStyle = "#3a2e44"; ctx.lineWidth = 2;
-  for (var fx = 30; fx < W; fx += 60) { ctx.beginPath(); ctx.moveTo(fx, H * 0.58); ctx.lineTo(fx, H * 0.68); ctx.stroke(); }
-  ctx.beginPath(); ctx.moveTo(0, H * 0.6); ctx.lineTo(W, H * 0.6);
-  ctx.moveTo(0, H * 0.64); ctx.lineTo(W, H * 0.64); ctx.stroke();
-  ctx.fillStyle = "#1a1025";
-  ctx.beginPath(); ctx.moveTo(100, H * 0.6); ctx.quadraticCurveTo(80, H * 0.2, 60, H * 0.05);
-  ctx.lineTo(140, H * 0.05); ctx.quadraticCurveTo(120, H * 0.2, 120, H * 0.6); ctx.fill();
-  ctx.strokeStyle = "#1a1025"; ctx.lineWidth = 4;
-  [[80,200,40,140],[110,180,180,120],[100,160,60,100],[130,160,190,100],[90,130,30,70],[120,130,170,70],[105,100,70,50]].forEach(function(br) {
-    ctx.beginPath(); ctx.moveTo(br[0], br[1]); ctx.lineTo(br[2], br[3]); ctx.stroke();
-  });
-  var blossomColors = ["rgba(255,180,190,0.25)","rgba(255,200,210,0.2)","rgba(255,160,180,0.3)"];
-  for (var i = 0; i < 80; i++) {
-    var bx = 20 + Math.random() * 200, by = 20 + Math.random() * 180;
-    if (Math.hypot(bx - 100, by - 100) < 120) {
-      ctx.fillStyle = blossomColors[Math.floor(Math.random() * 3)];
-      ctx.beginPath(); ctx.arc(bx, by, 3 + Math.random() * 4, 0, Math.PI * 2); ctx.fill();
-    }
-  }
-  for (var i = 0; i < 30; i++) {
-    ctx.fillStyle = "rgba(255, 190, 200, 0.15)";
-    ctx.beginPath(); ctx.arc(Math.random() * W, Math.random() * H * 0.7, 2.5 + Math.random() * 3, 0, Math.PI * 2); ctx.fill();
-  }
-})();
+(function drawBackground(){var c=document.getElementById("bg-canvas");var ctx=c.getContext("2d");var W=1280,H=720;function resize(){var s=Math.max(c.parentElement.clientWidth/W,c.parentElement.clientHeight/H);c.width=W;c.height=H}resize();window.addEventListener("resize",resize);var sky=ctx.createLinearGradient(0,0,0,H);sky.addColorStop(0,"#0a0a1e");sky.addColorStop(0.3,"#12183a");sky.addColorStop(0.5,"#1a2450");sky.addColorStop(0.7,"#1e3060");sky.addColorStop(0.85,"#243868");sky.addColorStop(1,"#2a4068");ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);var stars=[[120,45],[340,32],[560,60],[780,25],[950,55],[1080,40],[200,80],[890,70],[1050,15],[420,50],[650,38],[70,90],[300,20],[500,75],[750,15],[900,30],[1150,50]];stars.forEach(function(s){ctx.globalAlpha=0.4+Math.random()*0.5;ctx.beginPath();ctx.arc(s[0],s[1],1.2,0,Math.PI*2);ctx.fill()});ctx.globalAlpha=1;var blds=[[0,280],[60,240],[140,270],[200,220],[280,260],[350,200],[430,250],[500,210],[580,270],[660,230],[740,260],[820,200],[900,250],[980,220],[1060,270],[1140,240]];blds.forEach(function(b,i){var w=75+(i%3)*15;var h=H*0.7-b[1];ctx.fillStyle="#0a0e20";ctx.fillRect(b[0],b[1],w+10,h);ctx.fillStyle="#0f1430";ctx.fillRect(b[0],b[1],w+10,20);for(var wy=b[1]+30;wy<b[1]+h-15;wy+=28){for(var wx=b[0]+10;wx<b[0]+w-5;wx+=22){if(Math.random()>0.4){ctx.fillStyle="rgba(180,210,255,"+(0.15+Math.random()*0.35)+")";ctx.fillRect(wx,wy,14,16)}}}});var ground=ctx.createLinearGradient(0,H*0.65,0,H);ground.addColorStop(0,"#0d1025");ground.addColorStop(0.5,"#0a0c1e");ground.addColorStop(1,"#060812");ctx.fillStyle=ground;ctx.fillRect(0,H*0.65,W,H*0.35);for(var lx=80;lx<W;lx+=200){var glow=ctx.createRadialGradient(lx,H*0.5,10,lx,H*0.65,120);glow.addColorStop(0,"rgba(255,220,180,0.15)");glow.addColorStop(0.5,"rgba(255,200,150,0.05)");glow.addColorStop(1,"rgba(255,180,120,0)");ctx.fillStyle=glow;ctx.fillRect(lx-120,H*0.4,240,H*0.35)}var redG=ctx.createRadialGradient(W*0.75,H*0.45,5,W*0.75,H*0.6,200);redG.addColorStop(0,"rgba(200,50,50,0.12)");redG.addColorStop(0.5,"rgba(200,50,50,0.04)");redG.addColorStop(1,"rgba(200,50,50,0)");ctx.fillStyle=redG;ctx.fillRect(W*0.5,H*0.35,W*0.5,H*0.35);for(var i=0;i<20;i++){ctx.fillStyle="rgba(180,210,255,0.08)";ctx.beginPath();ctx.arc(Math.random()*W,Math.random()*H*0.6,1.5+Math.random()*2.5,0,Math.PI*2);ctx.fill()}})();
 
 function drawCharacter(expression) {
   var c = document.getElementById("char-canvas");
@@ -70,8 +7,6 @@ function drawCharacter(expression) {
   c.width = W; c.height = H;
   ctx.clearRect(0, 0, W, H);
   var cx = W / 2;
-
-  // Hair back
   ctx.fillStyle = "#2c1a3a";
   ctx.beginPath();
   ctx.moveTo(cx - 90, 30);
@@ -81,8 +16,6 @@ function drawCharacter(expression) {
   ctx.quadraticCurveTo(cx + 70, 520, cx + 100, 420);
   ctx.quadraticCurveTo(cx + 120, 200, cx + 90, 30);
   ctx.closePath(); ctx.fill();
-
-  // Hair back highlight
   ctx.fillStyle = "#3d2650";
   ctx.beginPath();
   ctx.moveTo(cx - 60, 60);
@@ -92,8 +25,6 @@ function drawCharacter(expression) {
   ctx.quadraticCurveTo(cx, 480, cx - 20, 350);
   ctx.quadraticCurveTo(cx - 10, 200, cx - 30, 60);
   ctx.closePath(); ctx.fill();
-
-  // Body / Uniform
   ctx.fillStyle = "#f5f0f8";
   ctx.beginPath();
   ctx.moveTo(cx - 70, 220);
@@ -103,43 +34,27 @@ function drawCharacter(expression) {
   ctx.lineTo(cx - 80, 540);
   ctx.quadraticCurveTo(cx - 90, 380, cx - 70, 220);
   ctx.closePath(); ctx.fill();
-
-  // Sailor collar
-  ctx.fillStyle = "#1a2a4a";
+  ctx.fillStyle = "#f5f0f8";
   ctx.beginPath();
-  ctx.moveTo(cx - 80, 215);
-  ctx.quadraticCurveTo(cx - 50, 190, cx, 230);
-  ctx.quadraticCurveTo(cx + 50, 190, cx + 80, 215);
-  ctx.quadraticCurveTo(cx + 60, 290, cx + 65, 310);
-  ctx.lineTo(cx, 270);
-  ctx.lineTo(cx - 65, 310);
-  ctx.quadraticCurveTo(cx - 60, 290, cx - 80, 215);
+  ctx.moveTo(cx - 25, 220);
+  ctx.quadraticCurveTo(cx - 5, 210, cx, 230);
+  ctx.quadraticCurveTo(cx + 5, 210, cx + 25, 220);
+  ctx.lineTo(cx + 35, 265);
+  ctx.lineTo(cx, 255);
+  ctx.lineTo(cx - 35, 265);
   ctx.closePath(); ctx.fill();
-
-  // Red ribbon
   ctx.fillStyle = "#c44555";
   ctx.beginPath();
-  ctx.moveTo(cx - 8, 250);
-  ctx.quadraticCurveTo(cx - 30, 270, cx - 40, 300);
-  ctx.quadraticCurveTo(cx - 15, 285, cx, 270);
-  ctx.quadraticCurveTo(cx + 15, 290, cx + 40, 300);
-  ctx.quadraticCurveTo(cx + 30, 270, cx + 8, 250);
+  ctx.moveTo(cx - 12, 248);
+  ctx.quadraticCurveTo(cx, 244, cx + 12, 248);
+  ctx.quadraticCurveTo(cx + 15, 258, cx + 10, 262);
+  ctx.quadraticCurveTo(cx, 266, cx - 10, 262);
+  ctx.quadraticCurveTo(cx - 15, 258, cx - 12, 248);
   ctx.closePath(); ctx.fill();
-
-  // Ribbon tails
-  ctx.fillStyle = "#b33a4a";
-  ctx.beginPath();
-  ctx.moveTo(cx, 268);
-  ctx.quadraticCurveTo(cx - 10, 320, cx - 25, 350);
-  ctx.quadraticCurveTo(cx - 10, 340, cx + 5, 300);
-  ctx.closePath(); ctx.fill();
-  ctx.beginPath();
-  ctx.moveTo(cx, 268);
-  ctx.quadraticCurveTo(cx + 10, 320, cx + 25, 350);
-  ctx.quadraticCurveTo(cx + 10, 340, cx - 5, 300);
-  ctx.closePath(); ctx.fill();
-
-  // Dark slacks
+  ctx.fillStyle = "#fff";
+  ctx.font = "6px sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText("HW", cx, 258);
   ctx.fillStyle = "#1a2238";
   ctx.beginPath();
   ctx.moveTo(cx - 55, 340);
@@ -148,8 +63,77 @@ function drawCharacter(expression) {
   ctx.quadraticCurveTo(cx + 70, 480, cx + 65, 540);
   ctx.lineTo(cx - 65, 540);
   ctx.quadraticCurveTo(cx - 70, 480, cx - 55, 340);
-  ctx.closePath();
-  ctx.fill();
+  ctx.closePath(); ctx.fill();
+  ctx.fillStyle = "#f5f0f8";
+  ctx.beginPath(); ctx.ellipse(cx - 100, 380, 22, 80, -0.15, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(cx + 100, 380, 22, 80, 0.15, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = "#fce4dc";
+  ctx.beginPath();
+  ctx.moveTo(cx - 16, 200);
+  ctx.quadraticCurveTo(cx - 14, 220, cx - 12, 230);
+  ctx.lineTo(cx + 12, 230);
+  ctx.quadraticCurveTo(cx + 14, 220, cx + 16, 200);
+  ctx.closePath(); ctx.fill();
+  ctx.fillStyle = "#fce4dc";
+  ctx.beginPath();
+  ctx.moveTo(cx - 75, 160);
+  ctx.quadraticCurveTo(cx - 80, 130, cx - 65, 100);
+  ctx.quadraticCurveTo(cx - 35, 35, cx, 30);
+  ctx.quadraticCurveTo(cx + 35, 35, cx + 65, 100);
+  ctx.quadraticCurveTo(cx + 80, 130, cx + 75, 160);
+  ctx.quadraticCurveTo(cx + 70, 190, cx + 30, 210);
+  ctx.quadraticCurveTo(cx, 220, cx - 30, 210);
+  ctx.quadraticCurveTo(cx - 70, 190, cx - 75, 160);
+  ctx.closePath(); ctx.fill();
+  ctx.fillStyle = "rgba(230, 190, 175, 0.3)";
+  ctx.beginPath();
+  ctx.moveTo(cx - 50, 180);
+  ctx.quadraticCurveTo(cx - 60, 165, cx - 55, 140);
+  ctx.quadraticCurveTo(cx - 25, 160, cx - 15, 180);
+  ctx.quadraticCurveTo(cx - 25, 190, cx - 50, 180);
+  ctx.closePath(); ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(cx + 50, 180);
+  ctx.quadraticCurveTo(cx + 60, 165, cx + 55, 140);
+  ctx.quadraticCurveTo(cx + 25, 160, cx + 15, 180);
+  ctx.quadraticCurveTo(cx + 25, 190, cx + 50, 180);
+  ctx.closePath(); ctx.fill();
+  ctx.fillStyle = "#2c1a3a";
+  ctx.beginPath();
+  ctx.moveTo(cx - 70, 140);
+  ctx.quadraticCurveTo(cx - 80, 110, cx - 50, 50);
+  ctx.quadraticCurveTo(cx - 30, 30, cx, 25);
+  ctx.lineTo(cx, 70); ctx.lineTo(cx - 60, 120);
+  ctx.closePath(); ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(cx + 70, 140);
+  ctx.quadraticCurveTo(cx + 80, 110, cx + 50, 50);
+  ctx.quadraticCurveTo(cx + 30, 30, cx, 25);
+  ctx.lineTo(cx, 70); ctx.lineTo(cx + 60, 120);
+  ctx.closePath(); ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(cx - 35, 50);
+  ctx.quadraticCurveTo(cx - 15, 20, cx, 15);
+  ctx.quadraticCurveTo(cx + 15, 20, cx + 35, 50);
+  ctx.lineTo(cx + 20, 60);
+  ctx.quadraticCurveTo(cx, 45, cx - 20, 60);
+  ctx.closePath(); ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(cx - 55, 90);
+  ctx.quadraticCurveTo(cx - 50, 65, cx - 25, 55);
+  ctx.lineTo(cx - 15, 75); ctx.lineTo(cx - 45, 100);
+  ctx.closePath(); ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(cx + 55, 90);
+  ctx.quadraticCurveTo(cx + 50, 65, cx + 25, 55);
+  ctx.lineTo(cx + 15, 75); ctx.lineTo(cx + 45, 100);
+  ctx.closePath(); ctx.fill();
+  function drawEye(ex, ey) {
+    ctx.fillStyle = "#fff";
+    ctx.beginPath();
+    ctx.ellipse(ex, ey, 18, 22, 0, Math.PI, 0);
+    ctx.ellipse(ex, ey, 18, 12, 0, 0, Math.PI);
+    ctx.fill();
     ctx.fillStyle = "#5a3a6a";
     ctx.beginPath(); ctx.arc(ex, ey + 2, 13, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = "#1a0a2a";
@@ -170,25 +154,17 @@ function drawCharacter(expression) {
   }
   drawEye(cx - 38, 130);
   drawEye(cx + 38, 130);
-
-  // Eyebrows
   ctx.strokeStyle = "#2c1a3a"; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.moveTo(cx - 55, 102); ctx.quadraticCurveTo(cx - 38, 95, cx - 22, 100); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(cx + 55, 102); ctx.quadraticCurveTo(cx + 38, 95, cx + 22, 100); ctx.stroke();
-
-  // Blush
   ctx.fillStyle = "rgba(255, 160, 160, 0.25)";
   ctx.beginPath(); ctx.ellipse(cx - 50, 160, 14, 8, 0, 0, Math.PI * 2); ctx.fill();
   ctx.beginPath(); ctx.ellipse(cx + 50, 160, 14, 8, 0, 0, Math.PI * 2); ctx.fill();
-
-  // Nose
   ctx.fillStyle = "rgba(200, 160, 150, 0.4)";
   ctx.beginPath();
   ctx.moveTo(cx, 152); ctx.lineTo(cx - 3, 160);
   ctx.quadraticCurveTo(cx, 163, cx + 3, 160);
   ctx.closePath(); ctx.fill();
-
-  // Mouth by expression
   if (expression === "happy") {
     ctx.strokeStyle = "#c48080"; ctx.lineWidth = 2;
     ctx.beginPath();
@@ -208,12 +184,9 @@ function drawCharacter(expression) {
     ctx.moveTo(cx - 8, 175); ctx.quadraticCurveTo(cx, 184, cx + 8, 175);
     ctx.stroke();
   }
-
-  // Hair accessory
-  ctx.fillStyle = "#c44555";
-  ctx.beginPath(); ctx.arc(cx + 55, 70, 8, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = "#8899bb";
+  ctx.beginPath(); ctx.arc(cx + 55, 70, 6, 0, Math.PI * 2); ctx.fill();
 }
-
 
 var story = {
   start: "scene1",
@@ -308,8 +281,7 @@ var story = {
       ending: {
         title: "约定",
         type: "✦ TRUE ENDING ✦",
-        text: "那个凌晨的工位，成了你们两个人的秘密。
-从此以后，每个加班的夜晚，都不再是一个人。",
+        text: "那个凌晨的工位，成了你们两个人的秘密。\n从此以后，每个加班的夜晚，都不再是一个人。",
       },
     },
     ending_neutral: {
@@ -324,21 +296,16 @@ var story = {
       ending: {
         title: "余音",
         type: "✦ NORMAL ENDING ✦",
-        text: "你记住了那个工位的位置，却没有再回去过。
-有些bug注定要被留在某个加班的夜晚。",
+        text: "你记住了那个工位的位置，却没有再回去过。\n有些bug注定要被留在某个加班的夜晚。",
       },
     },
   },
 };
 
-
 var game = {
-  currentScene: null,
-  currentLineIdx: 0,
-  isTyping: false,
-  typeTimer: null,
-  inChoice: false,
-  ended: false,
+  currentScene: null, currentLineIdx: 0,
+  isTyping: false, typeTimer: null,
+  inChoice: false, ended: false,
 };
 
 function $(sel) { return document.querySelector(sel); }
@@ -351,104 +318,62 @@ var titleScreen = $("#title-screen");
 var endingScreen = $("#ending-screen");
 
 function setCharacter(expr) {
-  if (expr) {
-    charCanvas.classList.remove("hidden-char");
-    drawCharacter(expr);
-  } else {
-    charCanvas.classList.add("hidden-char");
-  }
+  if (expr) { charCanvas.classList.remove("hidden-char"); drawCharacter(expr); }
+  else { charCanvas.classList.add("hidden-char"); }
 }
 
 function startScene(sceneId) {
-  game.currentScene = sceneId;
-  game.currentLineIdx = 0;
-  game.inChoice = false;
-  hideChoices();
-  advanceScene();
+  game.currentScene = sceneId; game.currentLineIdx = 0;
+  game.inChoice = false; hideChoices(); advanceScene();
 }
 
 function advanceScene() {
   var scene = story.scenes[game.currentScene];
   if (!scene) return;
-  if (scene.type === "choice") {
-    showChoices(scene);
-    return;
-  }
+  if (scene.type === "choice") { showChoices(scene); return; }
   if (game.currentLineIdx >= scene.lines.length) {
-    if (scene.ending) {
-      showEnding(scene.ending);
-    } else if (scene.next) {
-      startScene(scene.next);
-    }
+    if (scene.ending) { showEnding(scene.ending); }
+    else if (scene.next) { startScene(scene.next); }
     return;
   }
-  if (scene.charExpr !== undefined) {
-    setCharacter(scene.charExpr);
-  }
+  if (scene.charExpr !== undefined) { setCharacter(scene.charExpr); }
   var line = scene.lines[game.currentLineIdx];
-  showLine(line);
-  game.currentLineIdx++;
+  showLine(line); game.currentLineIdx++;
 }
 
 function showLine(line) {
-  if (line.speaker) {
-    nameTag.textContent = line.speaker;
-    nameTag.classList.remove("hidden-tag");
-  } else {
-    nameTag.classList.add("hidden-tag");
-  }
+  if (line.speaker) { nameTag.textContent = line.speaker; nameTag.classList.remove("hidden-tag"); }
+  else { nameTag.classList.add("hidden-tag"); }
   clickIndicator.style.display = "none";
-  typeText(line.text, function() {
-    clickIndicator.style.display = "block";
-  });
+  typeText(line.text, function() { clickIndicator.style.display = "block"; });
 }
 
 function typeText(text, callback) {
   game.isTyping = true;
   if (game.typeTimer) clearTimeout(game.typeTimer);
   dialogueText.textContent = "";
-  var i = 0;
-  var speed = 40;
+  var i = 0, speed = 40;
   function tick() {
-    if (i < text.length) {
-      dialogueText.textContent += text[i];
-      i++;
-      game.typeTimer = setTimeout(tick, speed);
-    } else {
-      game.isTyping = false;
-      game.typeTimer = null;
-      if (callback) callback();
-    }
+    if (i < text.length) { dialogueText.textContent += text[i]; i++; game.typeTimer = setTimeout(tick, speed); }
+    else { game.isTyping = false; game.typeTimer = null; if (callback) callback(); }
   }
   tick();
 }
 
 function showChoices(scene) {
-  game.inChoice = true;
-  choicesLayer.innerHTML = "";
-  choicesLayer.classList.add("active");
+  game.inChoice = true; choicesLayer.innerHTML = ""; choicesLayer.classList.add("active");
   scene.options.forEach(function(opt, idx) {
     var btn = document.createElement("button");
-    btn.className = "choice-btn";
-    btn.textContent = opt.text;
-    btn.addEventListener("click", function() {
-      if (game.inChoice) chooseOption(scene, idx);
-    });
+    btn.className = "choice-btn"; btn.textContent = opt.text;
+    btn.addEventListener("click", function() { if (game.inChoice) chooseOption(scene, idx); });
     choicesLayer.appendChild(btn);
     setTimeout(function() { btn.classList.add("show"); }, idx * 120);
   });
 }
 
-function hideChoices() {
-  game.inChoice = false;
-  choicesLayer.classList.remove("active");
-}
+function hideChoices() { game.inChoice = false; choicesLayer.classList.remove("active"); }
 
-function chooseOption(scene, idx) {
-  hideChoices();
-  var next = scene.options[idx].next;
-  startScene(next);
-}
+function chooseOption(scene, idx) { hideChoices(); startScene(scene.options[idx].next); }
 
 function showEnding(ending) {
   game.ended = true;
@@ -459,18 +384,12 @@ function showEnding(ending) {
 }
 
 function restart() {
-  game.ended = false;
-  game.currentScene = null;
-  game.currentLineIdx = 0;
-  game.isTyping = false;
-  game.inChoice = false;
+  game.ended = false; game.currentScene = null; game.currentLineIdx = 0;
+  game.isTyping = false; game.inChoice = false;
   if (game.typeTimer) clearTimeout(game.typeTimer);
-  dialogueText.textContent = "";
-  nameTag.classList.add("hidden-tag");
-  setCharacter(null);
-  hideChoices();
-  endingScreen.classList.remove("show");
-  titleScreen.classList.remove("hidden");
+  dialogueText.textContent = ""; nameTag.classList.add("hidden-tag");
+  setCharacter(null); hideChoices();
+  endingScreen.classList.remove("show"); titleScreen.classList.remove("hidden");
 }
 
 $("#start-btn").addEventListener("click", function() {
@@ -484,12 +403,9 @@ $("#dialogue-box").addEventListener("click", function() {
   if (game.ended || game.inChoice) return;
   if (game.isTyping) {
     if (game.typeTimer) clearTimeout(game.typeTimer);
-    game.isTyping = false;
-    game.typeTimer = null;
+    game.isTyping = false; game.typeTimer = null;
     var scene = story.scenes[game.currentScene];
-    if (scene && game.currentLineIdx > 0) {
-      dialogueText.textContent = scene.lines[game.currentLineIdx - 1].text;
-    }
+    if (scene && game.currentLineIdx > 0) { dialogueText.textContent = scene.lines[game.currentLineIdx - 1].text; }
     clickIndicator.style.display = "block";
     return;
   }
