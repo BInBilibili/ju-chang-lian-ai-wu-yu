@@ -84,25 +84,23 @@ const GameManager = {
       BackgroundRenderer.draw('');
     }
     
-    if (scene.character) {
-      CharacterRenderer.draw(scene.character, scene.charExpression || 'neutral');
-    } else {
-      CharacterRenderer.hide();
-    }
+    CharacterRenderer.hide();
     
     SceneManager.showDialogue(true);
     
     if (scene.lines && scene.lines.length > 0) {
-      this.showLine(scene.lines[GameState.currentLineIndex]);
+      this.showLine(scene.lines[GameState.currentLineIndex], scene);
     }
   },
   
-  showLine(line) {
-    if (line.speaker) {
+  showLine(line, scene) {
+    if (line.speaker && scene.character) {
       DOM.nameTag.textContent = line.speaker;
       DOM.nameTag.classList.add('visible');
+      CharacterRenderer.draw(scene.character, scene.charExpression || 'neutral');
     } else {
       DOM.nameTag.classList.remove('visible');
+      CharacterRenderer.hide();
     }
     
     DOM.clickIndicator.style.display = 'none';
@@ -156,7 +154,7 @@ const GameManager = {
       return;
     }
     
-    this.showLine(scene.lines[GameState.currentLineIndex]);
+    this.showLine(scene.lines[GameState.currentLineIndex], scene);
   },
   
   showEnding(ending) {
