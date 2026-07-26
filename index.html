@@ -465,13 +465,34 @@ function restart() {
   game.isTyping = false; game.inChoice = false;
   if (game.typeTimer) clearTimeout(game.typeTimer);
   dialogueText.textContent = ""; nameTag.classList.add("hidden-tag");
-  setCharacter(null); hideChoices();
+  
+var mapScreen = document.getElementById("map-screen");
+var locationPopup = document.getElementById("location-popup");
+var beijingMarker = document.getElementById("beijing-marker");
+
+beijingMarker.addEventListener("click", function() {
+  beijingMarker.classList.add("enlarged");
+  setTimeout(function() { locationPopup.classList.add("show"); }, 300);
+});
+
+document.getElementById("popup-yes").addEventListener("click", function() {
+  locationPopup.classList.remove("show");
+  mapScreen.classList.remove("show");
+  setTimeout(function() { startScene(story.start); }, 500);
+});
+
+document.getElementById("popup-no").addEventListener("click", function() {
+  locationPopup.classList.remove("show");
+  setTimeout(function() { beijingMarker.classList.remove("enlarged"); }, 300);
+});
+
+setCharacter(null); hideChoices();
   endingScreen.classList.remove("show"); titleScreen.classList.remove("hidden");
 }
 
 $("#start-btn").addEventListener("click", function() {
   titleScreen.classList.add("hidden");
-  setTimeout(function() { startScene(story.start); }, 400);
+  setTimeout(function() { document.getElementById("map-screen").classList.add("show"); }, 400);
 });
 
 $("#restart-btn").addEventListener("click", restart);
@@ -495,6 +516,27 @@ document.addEventListener("keydown", function(e) {
     if (game.ended || game.inChoice) return;
     $("#dialogue-box").click();
   }
+});
+
+
+var mapScreen = document.getElementById("map-screen");
+var locationPopup = document.getElementById("location-popup");
+var beijingMarker = document.getElementById("beijing-marker");
+
+beijingMarker.addEventListener("click", function() {
+  beijingMarker.classList.add("enlarged");
+  setTimeout(function() { locationPopup.classList.add("show"); }, 300);
+});
+
+document.getElementById("popup-yes").addEventListener("click", function() {
+  locationPopup.classList.remove("show");
+  mapScreen.classList.remove("show");
+  setTimeout(function() { startScene(story.start); }, 500);
+});
+
+document.getElementById("popup-no").addEventListener("click", function() {
+  locationPopup.classList.remove("show");
+  setTimeout(function() { beijingMarker.classList.remove("enlarged"); }, 300);
 });
 
 setCharacter(null);
