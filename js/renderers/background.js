@@ -1,7 +1,7 @@
 const BackgroundRenderer = {
   ctx: null,
   bgImages: {
-    'shenzhen_airport': 'images/bg_shenzhen_airport.jpg',
+    'airport': 'images/bg_airport.jpg',
     'office': 'images/bg_office.jpg',
     'office_canteen': 'images/bg_office_canteen.jpg',
     'office_desk': 'images/bg_office_desk.jpg',
@@ -66,7 +66,7 @@ const BackgroundRenderer = {
   },
   
   drawGradient(id, w, h) {
-    if (id === 'shenzhen_airport') {
+    if (id === 'airport') {
       const sky = this.ctx.createLinearGradient(0, 0, 0, h);
       sky.addColorStop(0, '#1a2840');
       sky.addColorStop(1, '#3a4860');

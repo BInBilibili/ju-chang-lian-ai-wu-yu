@@ -537,7 +537,7 @@ const StoryData = {
     startScene: 'sz_start',
     scenes: {
       sz_start: {
-        background: 'shenzhen_airport',
+        background: 'airport',
         character: 'xuye',
         charExpression: 'neutral',
         lines: [
@@ -553,7 +553,7 @@ const StoryData = {
         charExpression: 'happy',
         lines: [
           { speaker: '', text: '她推了推眼镜，眼神中带着一丝疲惫，但更多的是热情。' },
-          { speaker: '虚叶', text: '加班是常事，但大家都很Nice。一起加油！' },
+          { speaker: '虚叶', text: '这条线还没设定好' },
         ],
         ending: {
           title: '深夜咖啡',
