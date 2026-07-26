@@ -399,7 +399,9 @@ function setCharacter(expr) {
 
 function startScene(sceneId) {
   game.currentScene = sceneId; game.currentLineIdx = 0;
-  game.inChoice = false; hideChoices(); advanceScene();
+  game.inChoice = false; hideChoices();
+  dialogueText.textContent = '';
+  advanceScene();
 }
 
 function advanceScene() {
