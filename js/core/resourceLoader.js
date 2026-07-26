@@ -38,9 +38,27 @@ const ResourceLoader = {
   },
   
   loadScripts() {
-    this.resources.scripts.forEach(script => {
-      this.loadScript(script.id, script.src);
-    });
+    this.loadScriptSequentially(0);
+  },
+  
+  loadScriptSequentially(index) {
+    if (index >= this.resources.scripts.length) return;
+    
+    const script = this.resources.scripts[index];
+    const scriptElement = document.createElement('script');
+    scriptElement.src = script.src;
+    scriptElement.onload = () => {
+      this.loadedResources[script.id] = true;
+      this.onResourceLoaded();
+      this.loadScriptSequentially(index + 1);
+    };
+    scriptElement.onerror = () => {
+      console.error(`Failed to load script: ${script.src}`);
+      this.loadedResources[script.id] = false;
+      this.onResourceLoaded();
+      this.loadScriptSequentially(index + 1);
+    };
+    document.head.appendChild(scriptElement);
   },
   
   loadScript(id, src) {
