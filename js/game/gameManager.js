@@ -17,9 +17,34 @@ const GameManager = {
   
   startGame() {
     GameState.reset();
-    SceneManager.show('map');
-    MapRenderer.init();
-    CharacterRenderer.hide();
+    
+    // 显示加载状态
+    DOM.startBtn.textContent = '加载中...';
+    DOM.startBtn.disabled = true;
+    
+    // 动态加载ECharts和地图数据
+    this.loadScript('js/echarts.min.js', () => {
+      this.loadScript('js/china.js', () => {
+        SceneManager.show('map');
+        MapRenderer.init();
+        CharacterRenderer.hide();
+        
+        // 恢复按钮状态
+        DOM.startBtn.textContent = '开 始 游 戏';
+        DOM.startBtn.disabled = false;
+      });
+    });
+  },
+  
+  loadScript(src, callback) {
+    const script = document.createElement('script');
+    script.src = src;
+    script.onload = callback;
+    script.onerror = () => {
+      console.error(`Failed to load ${src}`);
+      callback();
+    };
+    document.head.appendChild(script);
   },
   
   restartGame() {
@@ -27,7 +52,6 @@ const GameManager = {
     SceneManager.show('map');
     MapRenderer.dispose();
     MapRenderer.init();
-    BackgroundRenderer.draw('night_city');
     CharacterRenderer.hide();
   },
   
