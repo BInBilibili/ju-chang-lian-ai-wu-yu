@@ -14,7 +14,7 @@ const StoryData = {
           { speaker: '', text: '进来的姑娘戴着一顶夸张的大红色帽子，穿着蓝白相间的宽大袍子。' },
           { speaker: '', text: '她手里还举着一把装饰用的"要石"道具。' },
           { speaker: '', text: '她走到台前，清了清嗓子，开口就是：' },
-          { speaker: '', text: '「世界 は 変わる の か——」' },
+          { speaker: '', text: '「教えて 教えてよ——」' },
           { speaker: '', text: '《unravel》的前奏一响，全办公室的人都醒了。' },
           { speaker: '', text: '她全开麦，从低音到高音一路飚上去，气息稳得像专业歌手。' },
           { speaker: '', text: '唱到副歌时整个会议室都在震。' },
