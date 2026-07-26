@@ -1,546 +1,119 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>菊厂恋爱物语 - HW Love Story</title>
+<title>HW Love Story</title>
 <style>
-  @import url("https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap");
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-  :root {
-    --vn-bg: #1a1a2e; --vn-text: #e8e8f0; --vn-name-bg: #2d2d44;
-    --vn-name-text: #ffccd5; --vn-box-bg: rgba(16, 16, 32, 0.92);
-    --vn-box-border: rgba(255, 200, 210, 0.25); --vn-choice-bg: rgba(40, 40, 70, 0.9);
-    --vn-choice-hover: rgba(80, 50, 80, 0.95); --vn-choice-border: rgba(200, 160, 180, 0.4);
-  }
-  body { width: 100vw; height: 100vh; overflow: hidden; background: #000; font-family: "Noto Sans SC", "Noto Serif SC", sans-serif; user-select: none; -webkit-user-select: none; }
-  #game { position: relative; width: 100%; height: 100%; max-width: 1280px; max-height: 720px; margin: auto; overflow: hidden; background: var(--vn-bg); }
-  #bg-layer { position: absolute; inset: 0; z-index: 0; }
-  #bg-canvas { width: 100%; height: 100%; display: block; }
-  #char-layer { position: absolute; inset: 0; z-index: 1; pointer-events: none; display: flex; align-items: flex-end; justify-content: center; }
-  #char-canvas { width: 480px; height: 640px; margin-bottom: 140px; transition: opacity 0.6s ease; }
-  #char-canvas.hidden-char { opacity: 0; }
-  #text-layer { position: absolute; bottom: 0; left: 0; right: 0; z-index: 2; padding: 0 40px 30px; }
-  #name-tag { display: inline-block; background: var(--vn-name-bg); color: var(--vn-name-text); font-size: 16px; font-weight: 700; padding: 6px 28px; border-radius: 8px 8px 0 0; letter-spacing: 0.05em; margin-bottom: -1px; transform: translateY(0); transition: opacity 0.3s ease, transform 0.3s ease; }
-  #name-tag.hidden-tag { opacity: 0; transform: translateY(8px); }
-  #dialogue-box { background: var(--vn-box-bg); border: 1px solid var(--vn-box-border); border-radius: 0 10px 10px 10px; padding: 20px 28px; min-height: 130px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); position: relative; }
-  #dialogue-text { color: var(--vn-text); font-size: 18px; line-height: 1.8; letter-spacing: 0.03em; min-height: 54px; }
-  #click-indicator { position: absolute; bottom: 10px; right: 20px; color: rgba(255, 255, 255, 0.5); font-size: 13px; animation: blink 1.2s ease-in-out infinite; }
-  @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
-  #choices-layer { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 3; display: flex; flex-direction: column; gap: 14px; pointer-events: none; }
-  #choices-layer.active { pointer-events: auto; }
-  .choice-btn { background: var(--vn-choice-bg); color: #e8d5e0; border: 1px solid var(--vn-choice-border); padding: 14px 48px; font-size: 17px; font-family: inherit; border-radius: 8px; cursor: pointer; letter-spacing: 0.04em; transition: all 0.25s ease; opacity: 0; transform: translateY(20px); white-space: nowrap; min-width: 280px; text-align: center; }
-  .choice-btn.show { opacity: 1; transform: translateY(0); }
-  .choice-btn:hover { background: var(--vn-choice-hover); border-color: rgba(255, 180, 200, 0.6); color: #fff; transform: translateY(-2px); box-shadow: 0 4px 20px rgba(180, 100, 140, 0.3); }
-  .choice-btn:active { transform: translateY(0); }
-  #title-screen { position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(ellipse at center, #1a1028 0%, #0a0a18 70%); transition: opacity 0.8s ease; }
-  #title-screen.hidden { opacity: 0; pointer-events: none; }
-  #title-screen h1 { font-family: "Noto Serif SC", serif; font-size: 48px; color: #ffcad4; letter-spacing: 0.12em; text-shadow: 0 0 40px rgba(255, 200, 210, 0.4); margin-bottom: 8px; }
-  #title-screen .subtitle { font-size: 16px; color: rgba(200, 180, 200, 0.6); letter-spacing: 0.15em; margin-bottom: 48px; }
-  #start-btn { background: transparent; color: #ffd0dc; border: 1.5px solid rgba(255, 200, 210, 0.4); padding: 14px 52px; font-size: 18px; font-family: inherit; letter-spacing: 0.1em; border-radius: 6px; cursor: pointer; transition: all 0.4s ease; }
-  #start-btn:hover { background: rgba(255, 180, 200, 0.12); border-color: rgba(255, 200, 210, 0.7); box-shadow: 0 0 30px rgba(200, 140, 170, 0.25); }
-  #ending-screen { position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(ellipse at center, #1a1028 0%, #0a0a18 70%); opacity: 0; pointer-events: none; transition: opacity 1s ease; }
-  #ending-screen.show { opacity: 1; pointer-events: auto; }
-  #ending-screen h2 { font-family: "Noto Serif SC", serif; font-size: 36px; color: #ffd0dc; letter-spacing: 0.1em; margin-bottom: 12px; }
-  #ending-screen .ending-type { font-size: 14px; color: rgba(200, 170, 190, 0.5); letter-spacing: 0.2em; margin-bottom: 36px; }
-  #ending-screen .ending-text { color: rgba(220, 200, 210, 0.8); font-size: 16px; line-height: 2; text-align: center; max-width: 500px; margin-bottom: 48px; letter-spacing: 0.05em; }
-  #restart-btn { background: transparent; color: #ffd0dc; border: 1.5px solid rgba(255, 200, 210, 0.4); padding: 12px 44px; font-size: 16px; font-family: inherit; letter-spacing: 0.1em; border-radius: 6px; cursor: pointer; transition: all 0.4s ease; }
-  #restart-btn:hover { background: rgba(255, 180, 200, 0.12); border-color: rgba(255, 200, 210, 0.7); }
-  @media (max-width: 768px) { #game { max-height: 100vh; } #char-canvas { width: 300px; height: 400px; margin-bottom: 110px; } #dialogue-text { font-size: 15px; } #name-tag { font-size: 14px; padding: 4px 20px; } #dialogue-box { padding: 14px 18px; min-height: 110px; } #title-screen h1 { font-size: 32px; } .choice-btn { font-size: 15px; padding: 12px 34px; min-width: 220px; } }
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@400;500&display=swap');
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{width:100vw;height:100vh;overflow:hidden;background:#000;font-family:'Noto Sans SC',sans-serif;user-select:none}
+#game{position:relative;width:100%;height:100%;max-width:1280px;max-height:720px;margin:auto;overflow:hidden;background:#0a0a18}
+.layer{position:absolute;inset:0;transition:opacity .5s}
+.hidden{opacity:0;pointer-events:none}
+#title{display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10;background:radial-gradient(ellipse at center,#1a1028,#0a0a18)}
+#title h1{font-family:'Noto Serif SC',serif;font-size:48px;color:#ffcad4;letter-spacing:.12em;text-shadow:0 0 40px rgba(255,200,210,.4);margin-bottom:8px}
+#title .sub{font-size:16px;color:rgba(200,180,200,.5);letter-spacing:.15em;margin-bottom:48px}
+.btn{background:transparent;color:#ffd0dc;border:1.5px solid rgba(255,200,210,.4);padding:14px 52px;font-size:18px;font-family:inherit;letter-spacing:.1em;border-radius:6px;cursor:pointer;transition:all .4s}
+.btn:hover{background:rgba(255,180,200,.12);border-color:rgba(255,200,210,.7);box-shadow:0 0 30px rgba(200,140,170,.25)}
+#map{display:flex;align-items:center;justify-content:center;z-index:5;background:radial-gradient(ellipse at center,#141e2e,#080c16)}
+#map-svg{width:90%;height:90%}
+.land{fill:#1a2840;stroke:#3a5070;stroke-width:1.5}
+.city{cursor:pointer;transition:transform .25s}
+.city:hover{transform:scale(1.35)}
+.city.pinned{transform:scale(1.4)}
+.dot{fill:#ff4444;stroke:#fff;stroke-width:2}
+.lbl{fill:#ff6b6b;font-size:15px;pointer-events:none}
+.pulse{fill:none;stroke:#ff4444;stroke-width:2;opacity:.6;animation:p 2s ease-out infinite}
+@keyframes p{0%{r:10;opacity:.8}100%{r:30;opacity:0}}
+.overlay{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:6;background:rgba(16,16,32,.95);border:1px solid rgba(255,200,210,.3);border-radius:12px;padding:28px 40px;text-align:center;opacity:0;pointer-events:none;transition:opacity .3s}
+.overlay.on{opacity:1;pointer-events:auto}
+.overlay p{color:#e8d5e0;font-size:18px;margin-bottom:20px}
+#dlg{display:flex;flex-direction:column;justify-content:flex-end;padding:0 40px 30px;z-index:2}
+#tag{display:inline-block;background:#2d2d44;color:#ffccd5;font-size:16px;font-weight:700;padding:6px 28px;border-radius:8px 8px 0 0;letter-spacing:.05em;margin-bottom:-1px;opacity:0;transition:opacity .3s}
+#tag.show{opacity:1}
+#box{background:rgba(16,16,32,.92);border:1px solid rgba(255,200,210,.25);border-radius:0 10px 10px 10px;padding:20px 28px;min-height:130px;backdrop-filter:blur(12px);position:relative}
+#txt{color:#e8e8f0;font-size:18px;line-height:1.8;min-height:54px}
+#indicator{position:absolute;bottom:10px;right:20px;color:rgba(255,255,255,.5);font-size:13px;animation:blink 1.2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:.3}50%{opacity:1}}
+#end{display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:3;background:rgba(0,0,0,.7)}
+#end h2{font-family:'Noto Serif SC',serif;font-size:36px;color:#ffd0dc;margin-bottom:20px}
+@media(max-width:768px){#title h1{font-size:32px}#txt{font-size:15px}#tag{font-size:14px;padding:4px 20px}#box{padding:14px 18px;min-height:110px}.btn{padding:10px 36px;font-size:16px}}
 </style>
 </head>
 <body>
 <div id="game">
-  <div id="bg-layer"><canvas id="bg-canvas"></canvas></div>
-  <div id="char-layer"><canvas id="char-canvas" width="480" height="640"></canvas></div>
-  <div id="text-layer">
-    <div id="name-tag" class="hidden-tag"></div>
-    <div id="dialogue-box">
-      <div id="dialogue-text"></div>
-      <div id="click-indicator">▼ 点击继续</div>
+  <div id="title" class="layer">
+    <h1>菊厂恋爱物语</h1>
+    <div class="sub">HW Love Story</div>
+    <button class="btn" onclick="goMap()">开 始 游 戏</button>
+  </div>
+  <div id="map" class="layer hidden">
+    <svg id="map-svg" viewBox="0 0 900 750">
+      <polygon class="land" points="720,85 740,115 760,105 775,125 765,150 780,160 770,180 750,190 760,215 740,235 730,265 745,285 735,305 750,325 740,355 755,375 745,395 760,415 750,435 765,455 755,475 770,495 760,515 775,535 760,555 780,575 420,585 405,565 365,580 355,560 305,570 295,550 245,560 235,540 185,550 175,530 145,540 135,520 105,530 95,510 75,515 65,495 85,475 115,465 125,445 155,435 175,415 195,405 185,385 205,375 225,355 245,345 265,325 285,315 305,285 325,275 345,265 375,255 395,235 425,225 455,210 485,200 515,190 545,180 575,170 605,160 635,150 665,140 685,120 705,100 720,85"/>
+      <circle cx="550" cy="175" r="10" fill="none" stroke="#ff4444" stroke-width="2" opacity=".6"/>
+      <g class="city" onclick="pickCity('beijing')" transform="translate(550,175)">
+        <circle cx="0" cy="0" r="8" fill="#ff4444" stroke="#fff" stroke-width="2"/>
+        <text class="lbl" x="16" y="5">北京</text>
+      </g>
+      <g class="city" onclick="pickCity('shenzhen')" transform="translate(420,420)">
+        <circle cx="0" cy="0" r="8" fill="#ff4444" stroke="#fff" stroke-width="2"/>
+        <text class="lbl" x="16" y="5">深圳</text>
+      </g>
+    </svg>
+    <div id="popup" class="overlay">
+      <p id="popup-msg"></p>
+      <button class="btn" onclick="goStory()" style="padding:10px 28px;font-size:15px;margin-right:8px">出发</button>
+      <button class="btn" onclick="cancelCity()" style="padding:10px 28px;font-size:15px">再想想</button>
     </div>
   </div>
-  <div id="choices-layer"></div>
-  <div id="title-screen">
-    <h1>菊厂恋爱物语</h1>
-    <div class="subtitle">松山湖爱情故事</div>
-    <button id="start-btn">开 始 游 戏</button>
+  <div id="dlg" class="layer hidden">
+    <div id="tag"></div>
+    <div id="box">
+      <div id="txt"></div>
+      <div id="indicator">&#x25BC; 点击继续</div>
+    </div>
   </div>
-  <div id="ending-screen">
-    <h2 id="ending-title"></h2>
-    <div class="ending-type" id="ending-type"></div>
-    <div class="ending-text" id="ending-text"></div>
-    <button id="restart-btn">重 新 开 始</button>
+  <div id="end" class="layer hidden">
+    <h2>未完待续</h2>
+    <button class="btn" onclick="backToMap()" style="padding:10px 36px;font-size:16px">返回地图</button>
   </div>
 </div>
-<script>(function drawBackground(){var c=document.getElementById("bg-canvas");var ctx=c.getContext("2d");var W=1280,H=720;function resize(){var s=Math.max(c.parentElement.clientWidth/W,c.parentElement.clientHeight/H);c.width=W;c.height=H}resize();window.addEventListener("resize",resize);var sky=ctx.createLinearGradient(0,0,0,H);sky.addColorStop(0,"#0a0a1e");sky.addColorStop(0.3,"#12183a");sky.addColorStop(0.5,"#1a2450");sky.addColorStop(0.7,"#1e3060");sky.addColorStop(0.85,"#243868");sky.addColorStop(1,"#2a4068");ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);var stars=[[120,45],[340,32],[560,60],[780,25],[950,55],[1080,40],[200,80],[890,70],[1050,15],[420,50],[650,38],[70,90],[300,20],[500,75],[750,15],[900,30],[1150,50]];stars.forEach(function(s){ctx.globalAlpha=0.4+Math.random()*0.5;ctx.beginPath();ctx.arc(s[0],s[1],1.2,0,Math.PI*2);ctx.fill()});ctx.globalAlpha=1;var blds=[[0,280],[60,240],[140,270],[200,220],[280,260],[350,200],[430,250],[500,210],[580,270],[660,230],[740,260],[820,200],[900,250],[980,220],[1060,270],[1140,240]];blds.forEach(function(b,i){var w=75+(i%3)*15;var h=H*0.7-b[1];ctx.fillStyle="#0a0e20";ctx.fillRect(b[0],b[1],w+10,h);ctx.fillStyle="#0f1430";ctx.fillRect(b[0],b[1],w+10,20);for(var wy=b[1]+30;wy<b[1]+h-15;wy+=28){for(var wx=b[0]+10;wx<b[0]+w-5;wx+=22){if(Math.random()>0.4){ctx.fillStyle="rgba(180,210,255,"+(0.15+Math.random()*0.35)+")";ctx.fillRect(wx,wy,14,16)}}}});var ground=ctx.createLinearGradient(0,H*0.65,0,H);ground.addColorStop(0,"#0d1025");ground.addColorStop(0.5,"#0a0c1e");ground.addColorStop(1,"#060812");ctx.fillStyle=ground;ctx.fillRect(0,H*0.65,W,H*0.35);for(var lx=80;lx<W;lx+=200){var glow=ctx.createRadialGradient(lx,H*0.5,10,lx,H*0.65,120);glow.addColorStop(0,"rgba(255,220,180,0.15)");glow.addColorStop(0.5,"rgba(255,200,150,0.05)");glow.addColorStop(1,"rgba(255,180,120,0)");ctx.fillStyle=glow;ctx.fillRect(lx-120,H*0.4,240,H*0.35)}var redG=ctx.createRadialGradient(W*0.75,H*0.45,5,W*0.75,H*0.6,200);redG.addColorStop(0,"rgba(200,50,50,0.12)");redG.addColorStop(0.5,"rgba(200,50,50,0.04)");redG.addColorStop(1,"rgba(200,50,50,0)");ctx.fillStyle=redG;ctx.fillRect(W*0.5,H*0.35,W*0.5,H*0.35);for(var i=0;i<20;i++){ctx.fillStyle="rgba(180,210,255,0.08)";ctx.beginPath();ctx.arc(Math.random()*W,Math.random()*H*0.6,1.5+Math.random()*2.5,0,Math.PI*2);ctx.fill()}})();
+<script>
+var E=function(id){return document.getElementById(id)}
+var title=E('title'),map=E('map'),dlg=E('dlg'),box=E('box'),txt=E('txt')
+var tag=E('tag'),ind=E('indicator'),popup=E('popup'),popupMsg=E('popup-msg'),end=E('end')
+var city='',scene=0,line=0,typing=false,timer=null
 
-function drawCharacter(expression) {
-  var c = document.getElementById("char-canvas");
-  var ctx = c.getContext("2d");
-  var W = 480, H = 640;
-  c.width = W; c.height = H;
-  ctx.clearRect(0, 0, W, H);
-  var cx = W / 2;
-  ctx.fillStyle = "#2c1a3a";
-  ctx.beginPath();
-  ctx.moveTo(cx - 90, 30);
-  ctx.quadraticCurveTo(cx - 120, 200, cx - 100, 420);
-  ctx.quadraticCurveTo(cx - 70, 520, cx - 40, 540);
-  ctx.lineTo(cx + 40, 540);
-  ctx.quadraticCurveTo(cx + 70, 520, cx + 100, 420);
-  ctx.quadraticCurveTo(cx + 120, 200, cx + 90, 30);
-  ctx.closePath(); ctx.fill();
-  ctx.fillStyle = "#3d2650";
-  ctx.beginPath();
-  ctx.moveTo(cx - 60, 60);
-  ctx.quadraticCurveTo(cx - 80, 250, cx - 60, 400);
-  ctx.quadraticCurveTo(cx - 40, 500, cx - 20, 520);
-  ctx.lineTo(cx + 10, 520);
-  ctx.quadraticCurveTo(cx, 480, cx - 20, 350);
-  ctx.quadraticCurveTo(cx - 10, 200, cx - 30, 60);
-  ctx.closePath(); ctx.fill();
-  ctx.fillStyle = "#f5f0f8";
-  ctx.beginPath();
-  ctx.moveTo(cx - 70, 220);
-  ctx.quadraticCurveTo(cx - 30, 210, cx, 240);
-  ctx.quadraticCurveTo(cx + 30, 210, cx + 70, 220);
-  ctx.quadraticCurveTo(cx + 90, 380, cx + 80, 540);
-  ctx.lineTo(cx - 80, 540);
-  ctx.quadraticCurveTo(cx - 90, 380, cx - 70, 220);
-  ctx.closePath(); ctx.fill();
-  ctx.fillStyle = "#f5f0f8";
-  ctx.beginPath();
-  ctx.moveTo(cx - 25, 220);
-  ctx.quadraticCurveTo(cx - 5, 210, cx, 230);
-  ctx.quadraticCurveTo(cx + 5, 210, cx + 25, 220);
-  ctx.lineTo(cx + 35, 265);
-  ctx.lineTo(cx, 255);
-  ctx.lineTo(cx - 35, 265);
-  ctx.closePath(); ctx.fill();
-  ctx.fillStyle = "#c44555";
-  ctx.beginPath();
-  ctx.moveTo(cx - 12, 248);
-  ctx.quadraticCurveTo(cx, 244, cx + 12, 248);
-  ctx.quadraticCurveTo(cx + 15, 258, cx + 10, 262);
-  ctx.quadraticCurveTo(cx, 266, cx - 10, 262);
-  ctx.quadraticCurveTo(cx - 15, 258, cx - 12, 248);
-  ctx.closePath(); ctx.fill();
-  ctx.fillStyle = "#fff";
-  ctx.font = "6px sans-serif";
-  ctx.textAlign = "center";
-  ctx.fillText("HW", cx, 258);
-  ctx.fillStyle = "#1a2238";
-  ctx.beginPath();
-  ctx.moveTo(cx - 55, 340);
-  ctx.quadraticCurveTo(cx - 35, 335, cx, 340);
-  ctx.quadraticCurveTo(cx + 35, 335, cx + 55, 340);
-  ctx.quadraticCurveTo(cx + 70, 480, cx + 65, 540);
-  ctx.lineTo(cx - 65, 540);
-  ctx.quadraticCurveTo(cx - 70, 480, cx - 55, 340);
-  ctx.closePath(); ctx.fill();
-  ctx.fillStyle = "#f5f0f8";
-  ctx.beginPath(); ctx.ellipse(cx - 100, 380, 22, 80, -0.15, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(cx + 100, 380, 22, 80, 0.15, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = "#fce4dc";
-  ctx.beginPath();
-  ctx.moveTo(cx - 16, 200);
-  ctx.quadraticCurveTo(cx - 14, 220, cx - 12, 230);
-  ctx.lineTo(cx + 12, 230);
-  ctx.quadraticCurveTo(cx + 14, 220, cx + 16, 200);
-  ctx.closePath(); ctx.fill();
-  ctx.fillStyle = "#fce4dc";
-  ctx.beginPath();
-  ctx.moveTo(cx - 75, 160);
-  ctx.quadraticCurveTo(cx - 80, 130, cx - 65, 100);
-  ctx.quadraticCurveTo(cx - 35, 35, cx, 30);
-  ctx.quadraticCurveTo(cx + 35, 35, cx + 65, 100);
-  ctx.quadraticCurveTo(cx + 80, 130, cx + 75, 160);
-  ctx.quadraticCurveTo(cx + 70, 190, cx + 30, 210);
-  ctx.quadraticCurveTo(cx, 220, cx - 30, 210);
-  ctx.quadraticCurveTo(cx - 70, 190, cx - 75, 160);
-  ctx.closePath(); ctx.fill();
-  ctx.fillStyle = "rgba(230, 190, 175, 0.3)";
-  ctx.beginPath();
-  ctx.moveTo(cx - 50, 180);
-  ctx.quadraticCurveTo(cx - 60, 165, cx - 55, 140);
-  ctx.quadraticCurveTo(cx - 25, 160, cx - 15, 180);
-  ctx.quadraticCurveTo(cx - 25, 190, cx - 50, 180);
-  ctx.closePath(); ctx.fill();
-  ctx.beginPath();
-  ctx.moveTo(cx + 50, 180);
-  ctx.quadraticCurveTo(cx + 60, 165, cx + 55, 140);
-  ctx.quadraticCurveTo(cx + 25, 160, cx + 15, 180);
-  ctx.quadraticCurveTo(cx + 25, 190, cx + 50, 180);
-  ctx.closePath(); ctx.fill();
-  ctx.fillStyle = "#2c1a3a";
-  ctx.beginPath();
-  ctx.moveTo(cx - 70, 140);
-  ctx.quadraticCurveTo(cx - 80, 110, cx - 50, 50);
-  ctx.quadraticCurveTo(cx - 30, 30, cx, 25);
-  ctx.lineTo(cx, 70); ctx.lineTo(cx - 60, 120);
-  ctx.closePath(); ctx.fill();
-  ctx.beginPath();
-  ctx.moveTo(cx + 70, 140);
-  ctx.quadraticCurveTo(cx + 80, 110, cx + 50, 50);
-  ctx.quadraticCurveTo(cx + 30, 30, cx, 25);
-  ctx.lineTo(cx, 70); ctx.lineTo(cx + 60, 120);
-  ctx.closePath(); ctx.fill();
-  ctx.beginPath();
-  ctx.moveTo(cx - 35, 50);
-  ctx.quadraticCurveTo(cx - 15, 20, cx, 15);
-  ctx.quadraticCurveTo(cx + 15, 20, cx + 35, 50);
-  ctx.lineTo(cx + 20, 60);
-  ctx.quadraticCurveTo(cx, 45, cx - 20, 60);
-  ctx.closePath(); ctx.fill();
-  ctx.beginPath();
-  ctx.moveTo(cx - 55, 90);
-  ctx.quadraticCurveTo(cx - 50, 65, cx - 25, 55);
-  ctx.lineTo(cx - 15, 75); ctx.lineTo(cx - 45, 100);
-  ctx.closePath(); ctx.fill();
-  ctx.beginPath();
-  ctx.moveTo(cx + 55, 90);
-  ctx.quadraticCurveTo(cx + 50, 65, cx + 25, 55);
-  ctx.lineTo(cx + 15, 75); ctx.lineTo(cx + 45, 100);
-  ctx.closePath(); ctx.fill();
-  function drawEye(ex, ey) {
-    ctx.fillStyle = "#fff";
-    ctx.beginPath();
-    ctx.ellipse(ex, ey, 18, 22, 0, Math.PI, 0);
-    ctx.ellipse(ex, ey, 18, 12, 0, 0, Math.PI);
-    ctx.fill();
-    ctx.fillStyle = "#5a3a6a";
-    ctx.beginPath(); ctx.arc(ex, ey + 2, 13, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#1a0a2a";
-    ctx.beginPath(); ctx.arc(ex, ey + 2, 7, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#fff";
-    ctx.beginPath(); ctx.arc(ex + 4, ey - 3, 4.5, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.arc(ex - 3, ey - 5, 2, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = "#1a0a2a"; ctx.lineWidth = 2.5;
-    ctx.beginPath();
-    ctx.moveTo(ex - 22, ey - 6);
-    ctx.quadraticCurveTo(ex, ey - 20, ex + 22, ey - 6);
-    ctx.stroke();
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.moveTo(ex - 16, ey + 8);
-    ctx.quadraticCurveTo(ex, ey + 14, ex + 16, ey + 8);
-    ctx.stroke();
-  }
-  drawEye(cx - 38, 130);
-  drawEye(cx + 38, 130);
-  ctx.strokeStyle = "#2c1a3a"; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(cx - 55, 102); ctx.quadraticCurveTo(cx - 38, 95, cx - 22, 100); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(cx + 55, 102); ctx.quadraticCurveTo(cx + 38, 95, cx + 22, 100); ctx.stroke();
-  ctx.fillStyle = "rgba(255, 160, 160, 0.25)";
-  ctx.beginPath(); ctx.ellipse(cx - 50, 160, 14, 8, 0, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(cx + 50, 160, 14, 8, 0, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = "rgba(200, 160, 150, 0.4)";
-  ctx.beginPath();
-  ctx.moveTo(cx, 152); ctx.lineTo(cx - 3, 160);
-  ctx.quadraticCurveTo(cx, 163, cx + 3, 160);
-  ctx.closePath(); ctx.fill();
-  if (expression === "happy") {
-    ctx.strokeStyle = "#c48080"; ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(cx - 12, 175); ctx.quadraticCurveTo(cx, 190, cx + 12, 175);
-    ctx.stroke();
-  } else if (expression === "surprised") {
-    ctx.fillStyle = "#c48080";
-    ctx.beginPath(); ctx.arc(cx, 178, 7, 0, Math.PI * 2); ctx.fill();
-  } else if (expression === "shy") {
-    ctx.strokeStyle = "#c48080"; ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(cx - 8, 175); ctx.quadraticCurveTo(cx, 182, cx + 8, 175);
-    ctx.stroke();
-  } else {
-    ctx.strokeStyle = "#c48080"; ctx.lineWidth = 1.8;
-    ctx.beginPath();
-    ctx.moveTo(cx - 8, 175); ctx.quadraticCurveTo(cx, 184, cx + 8, 175);
-    ctx.stroke();
-  }
-  ctx.fillStyle = "#8899bb";
-  ctx.beginPath(); ctx.arc(cx + 55, 70, 6, 0, Math.PI * 2); ctx.fill();
+var stories={
+  beijing:{name:'嫣儿',title:'北京',lines:[
+    {w:'',t:'高铁缓缓驶入北京南站，窗外的城市轮廓在晨光中逐渐清晰。'},
+    {w:'',t:'松山湖的日子仿佛还在昨天，但新的篇章已经翻开。'},
+    {w:'',t:'按照入职指引的地址，你拖着行李箱走进了北京的研发中心……'},
+    {w:'???',t:'你就是新来的同事吧？'},
+    {w:'',t:'一个扎着马尾的女孩从工位站起来，朝你挥了挥手。'},
+    {w:'嫣儿',t:'你好呀，我叫嫣儿。以后就是同事了，多多关照~'},
+  ]},
+  shenzhen:{name:'虚叶',title:'深圳',lines:[
+    {w:'',t:'飞机降落在宝安机场，潮湿的暖风扑面而来。'},
+    {w:'',t:'深圳，这座永远在奔跑的城市，你深吸一口气，走向出口。'},
+    {w:'',t:'研发大楼的灯还亮着，已是深夜十一点。'},
+    {w:'???',t:'这么晚才到？'},
+    {w:'',t:'一个戴着黑框眼镜的女生从茶水间走出来，手里端着咖啡。'},
+    {w:'虚叶',t:'我叫虚叶，等你半天了。这边工位都给你收拾好了，先坐下歇会吧。'},
+  ]}
 }
 
-var story = {
-  start: "scene1",
-  scenes: {
-    scene1: {
-      lines: [
-        { speaker: "", text: "深夜的松山湖基地格外安静，研发大楼的灯火却还亮着大半。" },
-        { speaker: "", text: "我伸了个懒腰，正准备关掉IDE下班时，隔壁工位传来一阵急促的键盘声。" },
-        { speaker: "", text: "……这个点了，还有人在加班？而且还是这么猛的敲键盘速度？" },
-        { speaker: "", text: "我好奇地探过头去——" },
-        { speaker: "???", text: "啊……" },
-        { speaker: "???", text: "你、你怎么还没走？吓我一跳……" },
-      ],
-      charExpr: null,
-      next: "choice1",
-    },
-    choice1: {
-      type: "choice",
-      options: [
-        { text: "「键盘声太响了，我还以为有人在打音游」", next: "scene2a" },
-        { text: "「看你debug好一会儿了，遇到什么bug了？」", next: "scene2b" },
-      ],
-    },
-    scene2a: {
-      lines: [
-        { speaker: "小菊", text: "噗……音游？我在改一个祖传代码的bug。" },
-        { speaker: "小菊", text: "这个模块的代码比我的工龄都大，注释全是拼音缩写……" },
-        { speaker: "", text: "她揉了揉眼睛，屏幕上密密麻麻的log让人看了就头疼。" },
-        { speaker: "小菊", text: "我叫小菊，2012实验室的。你呢？" },
-      ],
-      charExpr: "shy",
-      next: "choice2",
-    },
-    scene2b: {
-      lines: [
-        { speaker: "小菊", text: "观察力不错嘛……确实卡了半天了。" },
-        { speaker: "小菊", text: "我叫小菊。这个模块的并发锁有问题，线上偶尔会丢数据。" },
-        { speaker: "", text: "她皱着眉头盯着屏幕，但语气里没有抱怨，反而有种奇怪的兴奋感。" },
-        { speaker: "小菊", text: "你要不要……帮我一起看看？" },
-      ],
-      charExpr: "neutral",
-      next: "choice2",
-    },
-    choice2: {
-      type: "choice",
-      options: [
-        { text: "「好，我来帮你看看锁的逻辑」", next: "scene3a" },
-        { text: "「加班这么晚，先去茶水间喝杯咖啡吧」", next: "scene3b" },
-      ],
-    },
-    scene3a: {
-      lines: [
-        { speaker: "小菊", text: "真的吗？太好了！" },
-        { speaker: "", text: "她把椅子往旁边挪了挪，给我让出半个屏幕。" },
-        { speaker: "", text: "窗外松山湖的夜色安静得像一幅画，而屏幕上的代码正在一点点变得清晰。" },
-        { speaker: "", text: "我们并肩坐着，键盘的敲击声和偶尔的讨论声填满了空荡荡的楼层。" },
-        { speaker: "小菊", text: "……谢谢你帮忙。" },
-        { speaker: "小菊", text: "其实这个bug我已经看了三个晚上了，一直不好意思找别人问。" },
-      ],
-      charExpr: "happy",
-      next: "choice3",
-    },
-    scene3b: {
-      lines: [
-        { speaker: "小菊", text: "咖啡……？" },
-        { speaker: "", text: "她愣了一下，然后看了眼时间——凌晨一点半。" },
-        { speaker: "小菊", text: "确实该休息一下了。这个bug不会跑的，但人会。" },
-        { speaker: "", text: "她轻轻笑了笑，保存了代码，从工位上站起来。" },
-        { speaker: "小菊", text: "有时候盯着屏幕太久，反而看不到问题在哪。" },
-      ],
-      charExpr: "shy",
-      next: "choice3",
-    },
-    choice3: {
-      type: "choice",
-      options: [
-        { text: "「明天晚上我还能过来帮你吗？」", next: "ending_good" },
-        { text: "「不早了，我先下班了」", next: "ending_neutral" },
-      ],
-    },
-    ending_good: {
-      lines: [
-        { speaker: "小菊", text: "……！" },
-        { speaker: "", text: "她转过头看着我，眼睛里映着屏幕的微光。" },
-        { speaker: "小菊", text: "当然好啊！明天我请你喝咖啡！" },
-        { speaker: "小菊", text: "那就说定了，明天晚上，还是这个工位——" },
-        { speaker: "", text: "她笑了，是那种程序员特有的、熬夜熬出来的、但发自内心的笑。" },
-        { speaker: "", text: "松山湖的夜还很长，但有些东西，比bug更值得熬夜去修。" },
-      ],
-      charExpr: "happy",
-      next: null,
-      ending: {
-        title: "约定",
-        type: "✦ TRUE ENDING ✦",
-        text: "那个凌晨的工位，成了你们两个人的秘密。\n从此以后，每个加班的夜晚，都不再是一个人。",
-      },
-    },
-    ending_neutral: {
-      lines: [
-        { speaker: "小菊", text: "嗯，明天见。" },
-        { speaker: "", text: "她点了点头，重新坐回屏幕前，手指停在键盘上方。" },
-        { speaker: "", text: "走廊很长，灯光把影子拉得很远。我回头看了一次，她的屏幕还亮着。" },
-        { speaker: "", text: "但那天晚上的梦里，我好像又听到了那个窗口跳动的光标。" },
-      ],
-      charExpr: null,
-      next: null,
-      ending: {
-        title: "余音",
-        type: "✦ NORMAL ENDING ✦",
-        text: "你记住了那个工位的位置，却没有再回去过。\n有些bug注定要被留在某个加班的夜晚。",
-      },
-    },
-  },
-};
-
-var game = {
-  currentScene: null, currentLineIdx: 0,
-  isTyping: false, typeTimer: null,
-  inChoice: false, ended: false,
-};
-
-function $(sel) { return document.querySelector(sel); }
-var nameTag = $("#name-tag");
-var dialogueText = $("#dialogue-text");
-var clickIndicator = $("#click-indicator");
-var choicesLayer = $("#choices-layer");
-var charCanvas = $("#char-canvas");
-var titleScreen = $("#title-screen");
-var endingScreen = $("#ending-screen");
-
-function setCharacter(expr) {
-  if (expr) { charCanvas.classList.remove("hidden-char"); drawCharacter(expr); }
-  else { charCanvas.classList.add("hidden-char"); }
-}
-
-function startScene(sceneId) {
-  game.currentScene = sceneId; game.currentLineIdx = 0;
-  game.inChoice = false; hideChoices();
-  dialogueText.textContent = '';
-  advanceScene();
-}
-
-function advanceScene() {
-  var scene = story.scenes[game.currentScene];
-  if (!scene) return;
-  if (scene.type === "choice") { showChoices(scene); return; }
-  if (game.currentLineIdx >= scene.lines.length) {
-    if (scene.ending) { showEnding(scene.ending); }
-    else if (scene.next) { startScene(scene.next); }
-    return;
-  }
-  if (scene.charExpr !== undefined) { setCharacter(scene.charExpr); }
-  var line = scene.lines[game.currentLineIdx];
-  showLine(line); game.currentLineIdx++;
-}
-
-function showLine(line) {
-  if (line.speaker) { nameTag.textContent = line.speaker; nameTag.classList.remove("hidden-tag"); }
-  else { nameTag.classList.add("hidden-tag"); }
-  clickIndicator.style.display = "none";
-  typeText(line.text, function() { clickIndicator.style.display = "block"; });
-}
-
-function typeText(text, callback) {
-  game.isTyping = true;
-  if (game.typeTimer) clearTimeout(game.typeTimer);
-  dialogueText.textContent = "";
-  var i = 0, speed = 40;
-  function tick() {
-    if (i < text.length) { dialogueText.textContent += text[i]; i++; game.typeTimer = setTimeout(tick, speed); }
-    else { game.isTyping = false; game.typeTimer = null; if (callback) callback(); }
-  }
-  tick();
-}
-
-function showChoices(scene) {
-  game.inChoice = true; choicesLayer.innerHTML = ""; choicesLayer.classList.add("active");
-  scene.options.forEach(function(opt, idx) {
-    var btn = document.createElement("button");
-    btn.className = "choice-btn"; btn.textContent = opt.text;
-    btn.addEventListener("click", function() { if (game.inChoice) chooseOption(scene, idx); });
-    choicesLayer.appendChild(btn);
-    setTimeout(function() { btn.classList.add("show"); }, idx * 120);
-  });
-}
-
-function hideChoices() { game.inChoice = false; choicesLayer.classList.remove("active"); choicesLayer.innerHTML = ""; }
-
-function chooseOption(scene, idx) { hideChoices(); dialogueText.textContent = ''; startScene(scene.options[idx].next); }
-
-function showEnding(ending) {
-  game.ended = true;
-  $("#ending-title").textContent = ending.title;
-  $("#ending-type").textContent = ending.type;
-  $("#ending-text").textContent = ending.text;
-  endingScreen.classList.add("show");
-}
-
-function restart() {
-  game.ended = false; game.currentScene = null; game.currentLineIdx = 0;
-  game.isTyping = false; game.inChoice = false;
-  if (game.typeTimer) clearTimeout(game.typeTimer);
-  dialogueText.textContent = ""; nameTag.classList.add("hidden-tag");
-  
-var mapScreen = document.getElementById("map-screen");
-var locationPopup = document.getElementById("location-popup");
-var beijingMarker = document.getElementById("beijing-marker");
-
-if (beijingMarker) beijingMarker.addEventListener("click", function() {
-  beijingMarker.classList.add("enlarged");
-  setTimeout(function() { locationPopup.classList.add("show"); }, 300);
-});
-
-var py = document.getElementById("popup-yes"); if (py) py.addEventListener("click", function() {
-  locationPopup.classList.remove("show");
-  mapScreen.classList.remove("show");
-  setTimeout(function() { document.getElementById("text-layer").style.display=""; startScene(story.start); }, 500);
-});
-
-var pn = document.getElementById("popup-no"); if (pn) pn.addEventListener("click", function() {
-  locationPopup.classList.remove("show");
-  setTimeout(function() { beijingMarker.classList.remove("enlarged"); }, 300);
-});
-
-setCharacter(null); hideChoices();
-  endingScreen.classList.remove("show"); titleScreen.classList.remove("hidden");
-}
-
-$("#start-btn").addEventListener("click", function() {
-  titleScreen.classList.add("hidden");
-  var ms=document.getElementById("map-screen"); if(ms){setTimeout(function(){ms.classList.add("show");document.getElementById("text-layer").style.display="none"},400)}else{setTimeout(function(){startScene(story.start)},400)}
-});
-
-$("#restart-btn").addEventListener("click", restart);
-
-$("#dialogue-box").addEventListener("click", function() {
-  if (game.ended || game.inChoice) return;
-  if (game.isTyping) {
-    if (game.typeTimer) clearTimeout(game.typeTimer);
-    game.isTyping = false; game.typeTimer = null;
-    var scene = story.scenes[game.currentScene];
-    if (scene && game.currentLineIdx > 0) { dialogueText.textContent = scene.lines[game.currentLineIdx - 1].text; }
-    clickIndicator.style.display = "block";
-    return;
-  }
-  advanceScene();
-});
-
-document.addEventListener("keydown", function(e) {
-  if (e.code === "Space" || e.code === "Enter") {
-    e.preventDefault();
-    if (game.ended || game.inChoice) return;
-    $("#dialogue-box").click();
-  }
-});
-
-
-var mapScreen = document.getElementById("map-screen");
-var locationPopup = document.getElementById("location-popup");
-var beijingMarker = document.getElementById("beijing-marker");
-
-if (beijingMarker) beijingMarker.addEventListener("click", function() {
-  beijingMarker.classList.add("enlarged");
-  setTimeout(function() { locationPopup.classList.add("show"); }, 300);
-});
-
-var py = document.getElementById("popup-yes"); if (py) py.addEventListener("click", function() {
-  locationPopup.classList.remove("show");
-  mapScreen.classList.remove("show");
-  setTimeout(function() { document.getElementById("text-layer").style.display=""; startScene(story.start); }, 500);
-});
-
-var pn = document.getElementById("popup-no"); if (pn) pn.addEventListener("click", function() {
-  locationPopup.classList.remove("show");
-  setTimeout(function() { beijingMarker.classList.remove("enlarged"); }, 300);
-});
-
-setCharacter(null);
+function goMap(){title.classList.add('hidden');setTimeout(function(){map.classList.remove('hidden')},400)}
+function pickCity(c){city=c;document.querySelectorAll('.city').forEach(function(e){e.classList.remove('pinned')});document.querySelector('[onclick="pickCity(''+c+'')"]').classList.add('pinned');popupMsg.textContent='出发去'+stories[c].title+'？';popup.classList.add('on')}
+function cancelCity(){popup.classList.remove('on');document.querySelectorAll('.city').forEach(function(e){e.classList.remove('pinned')})}
+function goStory(){popup.classList.remove('on');scene=0;line=0;typing=false;map.classList.add('hidden');dlg.classList.remove('hidden');nxt()}
+function nxt(){var s=stories[city];if(line>=s.lines.length){fin();return}var l=s.lines[line];line++;if(l.w){tag.textContent=l.w;tag.classList.add('show')}else{tag.classList.remove('show')}ind.style.display='none';type(l.t,function(){ind.style.display='block'})}
+function type(t,cb){typing=true;if(timer)clearTimeout(timer);txt.textContent='';var i=0;function tick(){if(i<t.length){txt.textContent+=t[i];i++;timer=setTimeout(tick,35)}else{typing=false;timer=null;if(cb)cb()}}tick()}
+function fin(){dlg.classList.add('hidden');end.classList.remove('hidden')}
+function backToMap(){end.classList.add('hidden');map.classList.remove('hidden');city='';scene=0;line=0}
+box.addEventListener('click',function(){if(typing){typing=false;clearTimeout(timer);timer=null;return}nxt()})
+document.addEventListener('keydown',function(e){if(e.code==='Space'||e.code==='Enter'){e.preventDefault();box.click()}})
 </script>
 </body>
 </html>
-
