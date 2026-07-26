@@ -19,7 +19,6 @@ const GameManager = {
     GameState.reset();
     SceneManager.show('map');
     MapRenderer.init();
-    BackgroundRenderer.draw('night_city');
     CharacterRenderer.hide();
   },
   
