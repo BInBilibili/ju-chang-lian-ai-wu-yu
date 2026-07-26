@@ -4,7 +4,7 @@ const StoryData = {
     scenes: {
       // ========== 第一章：入职即传说 ==========
       bj_ch1_start: {
-        background: 'office_meeting',
+        background: 'office',
         character: null,
         charExpression: 'neutral',
         lines: [
@@ -25,7 +25,7 @@ const StoryData = {
       },
       
       bj_ch1_choice: {
-        background: 'office_meeting',
+        background: 'office',
         character: 'yaner',
         charExpression: 'happy',
         choices: [

@@ -3,7 +3,6 @@ const BackgroundRenderer = {
   bgImages: {
     'shenzhen_airport': 'images/bg_shenzhen_airport.jpg',
     'office': 'images/bg_office.jpg',
-    'office_meeting': 'images/bg_office_meeting.jpg',
     'office_canteen': 'images/bg_office_canteen.jpg',
     'office_desk': 'images/bg_office_desk.jpg',
     'office_desk_night': 'images/bg_office_desk_night.jpg',
@@ -74,12 +73,6 @@ const BackgroundRenderer = {
       this.ctx.fillStyle = sky;
       this.ctx.fillRect(0, 0, w, h);
     } else if (id === 'office') {
-      const sky = this.ctx.createLinearGradient(0, 0, 0, h);
-      sky.addColorStop(0, '#0f1430');
-      sky.addColorStop(1, '#2a3460');
-      this.ctx.fillStyle = sky;
-      this.ctx.fillRect(0, 0, w, h);
-    } else if (id === 'office_meeting') {
       const sky = this.ctx.createLinearGradient(0, 0, 0, h);
       sky.addColorStop(0, '#1a1f35');
       sky.addColorStop(1, '#2a3050');
