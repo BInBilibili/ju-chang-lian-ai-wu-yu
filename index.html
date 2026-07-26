@@ -492,7 +492,7 @@ setCharacter(null); hideChoices();
 
 $("#start-btn").addEventListener("click", function() {
   titleScreen.classList.add("hidden");
-  setTimeout(function() { document.getElementById("map-screen").classList.add("show"); document.getElementById("text-layer").style.display="none"; }, 400);
+  var ms=document.getElementById("map-screen"); if(ms){setTimeout(function(){ms.classList.add("show");document.getElementById("text-layer").style.display="none"},400)}else{setTimeout(function(){startScene(story.start)},400)}
 });
 
 $("#restart-btn").addEventListener("click", restart);
