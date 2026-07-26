@@ -470,18 +470,18 @@ var mapScreen = document.getElementById("map-screen");
 var locationPopup = document.getElementById("location-popup");
 var beijingMarker = document.getElementById("beijing-marker");
 
-beijingMarker.addEventListener("click", function() {
+if (beijingMarker) beijingMarker.addEventListener("click", function() {
   beijingMarker.classList.add("enlarged");
   setTimeout(function() { locationPopup.classList.add("show"); }, 300);
 });
 
-document.getElementById("popup-yes").addEventListener("click", function() {
+var py = document.getElementById("popup-yes"); if (py) py.addEventListener("click", function() {
   locationPopup.classList.remove("show");
   mapScreen.classList.remove("show");
   setTimeout(function() { document.getElementById("text-layer").style.display=""; startScene(story.start); }, 500);
 });
 
-document.getElementById("popup-no").addEventListener("click", function() {
+var pn = document.getElementById("popup-no"); if (pn) pn.addEventListener("click", function() {
   locationPopup.classList.remove("show");
   setTimeout(function() { beijingMarker.classList.remove("enlarged"); }, 300);
 });
@@ -523,18 +523,18 @@ var mapScreen = document.getElementById("map-screen");
 var locationPopup = document.getElementById("location-popup");
 var beijingMarker = document.getElementById("beijing-marker");
 
-beijingMarker.addEventListener("click", function() {
+if (beijingMarker) beijingMarker.addEventListener("click", function() {
   beijingMarker.classList.add("enlarged");
   setTimeout(function() { locationPopup.classList.add("show"); }, 300);
 });
 
-document.getElementById("popup-yes").addEventListener("click", function() {
+var py = document.getElementById("popup-yes"); if (py) py.addEventListener("click", function() {
   locationPopup.classList.remove("show");
   mapScreen.classList.remove("show");
   setTimeout(function() { document.getElementById("text-layer").style.display=""; startScene(story.start); }, 500);
 });
 
-document.getElementById("popup-no").addEventListener("click", function() {
+var pn = document.getElementById("popup-no"); if (pn) pn.addEventListener("click", function() {
   locationPopup.classList.remove("show");
   setTimeout(function() { beijingMarker.classList.remove("enlarged"); }, 300);
 });
