@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>菊厂恋爱物语 - HW Love Story</title>
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap");
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --vn-bg: #1a1a2e; --vn-text: #e8e8f0; --vn-name-bg: #2d2d44;
+    --vn-name-text: #ffccd5; --vn-box-bg: rgba(16, 16, 32, 0.92);
+    --vn-box-border: rgba(255, 200, 210, 0.25); --vn-choice-bg: rgba(40, 40, 70, 0.9);
+    --vn-choice-hover: rgba(80, 50, 80, 0.95); --vn-choice-border: rgba(200, 160, 180, 0.4);
+  }
+  body { width: 100vw; height: 100vh; overflow: hidden; background: #000; font-family: "Noto Sans SC", "Noto Serif SC", sans-serif; user-select: none; -webkit-user-select: none; }
+  #game { position: relative; width: 100%; height: 100%; max-width: 1280px; max-height: 720px; margin: auto; overflow: hidden; background: var(--vn-bg); }
+  #bg-layer { position: absolute; inset: 0; z-index: 0; }
+  #bg-canvas { width: 100%; height: 100%; display: block; }
+  #char-layer { position: absolute; inset: 0; z-index: 1; pointer-events: none; display: flex; align-items: flex-end; justify-content: center; }
+  #char-canvas { width: 480px; height: 640px; margin-bottom: 140px; transition: opacity 0.6s ease; }
+  #char-canvas.hidden-char { opacity: 0; }
+  #text-layer { position: absolute; bottom: 0; left: 0; right: 0; z-index: 2; padding: 0 40px 30px; }
+  #name-tag { display: inline-block; background: var(--vn-name-bg); color: var(--vn-name-text); font-size: 16px; font-weight: 700; padding: 6px 28px; border-radius: 8px 8px 0 0; letter-spacing: 0.05em; margin-bottom: -1px; transform: translateY(0); transition: opacity 0.3s ease, transform 0.3s ease; }
+  #name-tag.hidden-tag { opacity: 0; transform: translateY(8px); }
+  #dialogue-box { background: var(--vn-box-bg); border: 1px solid var(--vn-box-border); border-radius: 0 10px 10px 10px; padding: 20px 28px; min-height: 130px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); position: relative; }
+  #dialogue-text { color: var(--vn-text); font-size: 18px; line-height: 1.8; letter-spacing: 0.03em; min-height: 54px; }
+  #click-indicator { position: absolute; bottom: 10px; right: 20px; color: rgba(255, 255, 255, 0.5); font-size: 13px; animation: blink 1.2s ease-in-out infinite; }
+  @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+  #choices-layer { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 3; display: flex; flex-direction: column; gap: 14px; pointer-events: none; }
+  #choices-layer.active { pointer-events: auto; }
+  .choice-btn { background: var(--vn-choice-bg); color: #e8d5e0; border: 1px solid var(--vn-choice-border); padding: 14px 48px; font-size: 17px; font-family: inherit; border-radius: 8px; cursor: pointer; letter-spacing: 0.04em; transition: all 0.25s ease; opacity: 0; transform: translateY(20px); white-space: nowrap; min-width: 280px; text-align: center; }
+  .choice-btn.show { opacity: 1; transform: translateY(0); }
+  .choice-btn:hover { background: var(--vn-choice-hover); border-color: rgba(255, 180, 200, 0.6); color: #fff; transform: translateY(-2px); box-shadow: 0 4px 20px rgba(180, 100, 140, 0.3); }
+  .choice-btn:active { transform: translateY(0); }
+  #title-screen { position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(ellipse at center, #1a1028 0%, #0a0a18 70%); transition: opacity 0.8s ease; }
+  #title-screen.hidden { opacity: 0; pointer-events: none; }
+  #title-screen h1 { font-family: "Noto Serif SC", serif; font-size: 48px; color: #ffcad4; letter-spacing: 0.12em; text-shadow: 0 0 40px rgba(255, 200, 210, 0.4); margin-bottom: 8px; }
+  #title-screen .subtitle { font-size: 16px; color: rgba(200, 180, 200, 0.6); letter-spacing: 0.15em; margin-bottom: 48px; }
+  #start-btn { background: transparent; color: #ffd0dc; border: 1.5px solid rgba(255, 200, 210, 0.4); padding: 14px 52px; font-size: 18px; font-family: inherit; letter-spacing: 0.1em; border-radius: 6px; cursor: pointer; transition: all 0.4s ease; }
+  #start-btn:hover { background: rgba(255, 180, 200, 0.12); border-color: rgba(255, 200, 210, 0.7); box-shadow: 0 0 30px rgba(200, 140, 170, 0.25); }
+  #ending-screen { position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(ellipse at center, #1a1028 0%, #0a0a18 70%); opacity: 0; pointer-events: none; transition: opacity 1s ease; }
+  #ending-screen.show { opacity: 1; pointer-events: auto; }
+  #ending-screen h2 { font-family: "Noto Serif SC", serif; font-size: 36px; color: #ffd0dc; letter-spacing: 0.1em; margin-bottom: 12px; }
+  #ending-screen .ending-type { font-size: 14px; color: rgba(200, 170, 190, 0.5); letter-spacing: 0.2em; margin-bottom: 36px; }
+  #ending-screen .ending-text { color: rgba(220, 200, 210, 0.8); font-size: 16px; line-height: 2; text-align: center; max-width: 500px; margin-bottom: 48px; letter-spacing: 0.05em; }
+  #restart-btn { background: transparent; color: #ffd0dc; border: 1.5px solid rgba(255, 200, 210, 0.4); padding: 12px 44px; font-size: 16px; font-family: inherit; letter-spacing: 0.1em; border-radius: 6px; cursor: pointer; transition: all 0.4s ease; }
+  #restart-btn:hover { background: rgba(255, 180, 200, 0.12); border-color: rgba(255, 200, 210, 0.7); }
+  @media (max-width: 768px) { #game { max-height: 100vh; } #char-canvas { width: 300px; height: 400px; margin-bottom: 110px; } #dialogue-text { font-size: 15px; } #name-tag { font-size: 14px; padding: 4px 20px; } #dialogue-box { padding: 14px 18px; min-height: 110px; } #title-screen h1 { font-size: 32px; } .choice-btn { font-size: 15px; padding: 12px 34px; min-width: 220px; } }
+</style>
+</head>
+<body>
+<div id="game">
+  <div id="bg-layer"><canvas id="bg-canvas"></canvas></div>
+  <div id="char-layer"><canvas id="char-canvas" width="480" height="640"></canvas></div>
+  <div id="text-layer">
+    <div id="name-tag" class="hidden-tag"></div>
+    <div id="dialogue-box">
+      <div id="dialogue-text"></div>
+      <div id="click-indicator">▼ 点击继续</div>
+    </div>
+  </div>
+  <div id="choices-layer"></div>
+  <div id="title-screen">
+    <h1>菊厂恋爱物语</h1>
+    <div class="subtitle">松山湖爱情故事</div>
+    <button id="start-btn">开 始 游 戏</button>
+  </div>
+  <div id="ending-screen">
+    <h2 id="ending-title"></h2>
+    <div class="ending-type" id="ending-type"></div>
+    <div class="ending-text" id="ending-text"></div>
+    <button id="restart-btn">重 新 开 始</button>
+  </div>
+</div>
+<script src="game.js"></script>
+</body>
+</html>
