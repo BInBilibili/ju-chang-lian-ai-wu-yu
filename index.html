@@ -478,7 +478,7 @@ beijingMarker.addEventListener("click", function() {
 document.getElementById("popup-yes").addEventListener("click", function() {
   locationPopup.classList.remove("show");
   mapScreen.classList.remove("show");
-  setTimeout(function() { startScene(story.start); }, 500);
+  setTimeout(function() { document.getElementById("text-layer").style.display=""; startScene(story.start); }, 500);
 });
 
 document.getElementById("popup-no").addEventListener("click", function() {
@@ -492,7 +492,7 @@ setCharacter(null); hideChoices();
 
 $("#start-btn").addEventListener("click", function() {
   titleScreen.classList.add("hidden");
-  setTimeout(function() { document.getElementById("map-screen").classList.add("show"); }, 400);
+  setTimeout(function() { document.getElementById("map-screen").classList.add("show"); document.getElementById("text-layer").style.display="none"; }, 400);
 });
 
 $("#restart-btn").addEventListener("click", restart);
@@ -531,7 +531,7 @@ beijingMarker.addEventListener("click", function() {
 document.getElementById("popup-yes").addEventListener("click", function() {
   locationPopup.classList.remove("show");
   mapScreen.classList.remove("show");
-  setTimeout(function() { startScene(story.start); }, 500);
+  setTimeout(function() { document.getElementById("text-layer").style.display=""; startScene(story.start); }, 500);
 });
 
 document.getElementById("popup-no").addEventListener("click", function() {
