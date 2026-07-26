@@ -450,7 +450,7 @@ function showChoices(scene) {
 
 function hideChoices() { game.inChoice = false; choicesLayer.classList.remove("active"); }
 
-function chooseOption(scene, idx) { hideChoices(); startScene(scene.options[idx].next); }
+function chooseOption(scene, idx) { hideChoices(); dialogueText.textContent = ''; startScene(scene.options[idx].next); }
 
 function showEnding(ending) {
   game.ended = true;
