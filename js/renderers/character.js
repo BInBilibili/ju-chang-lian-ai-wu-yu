@@ -16,62 +16,58 @@ const CharacterRenderer = {
   preloadedImages: {},
   
   init() {
-    if (DOM.charImage) {
-      DOM.charImage.style.display = 'none';
-      
-      DOM.charImage.onerror = function(e) {
-        if (!this.src || this.src === window.location.href || this.src.indexOf('index.html') !== -1) {
-          return;
-        }
-        console.error('Character image load failed:', e);
-        console.error('Image src:', this.src);
-      };
-      
-      DOM.charImage.onload = function() {
-        this.classList.add('visible');
-        this.style.display = 'block';
-      };
-    }
+    // CSS 中 .character-image 已设置 display: none，无需内联样式
   },
-  
+
   setPreloadedImages(images) {
     this.preloadedImages = images;
   },
-  
+
   draw(characterId, expression = 'neutral', grayscale = false) {
     if (!DOM.charImage) return;
-    
-    // 优先查找带表情的图片
+
     const expressionKey = `${characterId}_${expression}`;
-    let imagePath = this.charImages[expressionKey];
-    
-    // 如果没有带表情的图片，使用默认图片
-    if (!imagePath) {
-      imagePath = this.charImages[characterId];
-    }
-    
-    if (!imagePath) {
+    const expressionPath = this.charImages[expressionKey];
+    const defaultPath = this.charImages[characterId];
+
+    if (!defaultPath) {
       this.hide();
       return;
     }
-    
-    // 尝试使用预加载的图片
-    const preloadId = characterId === 'yaner' ? 'char_yaner' : null;
-    if (preloadId && this.preloadedImages[preloadId]) {
-      DOM.charImage.src = this.preloadedImages[preloadId].src;
-    } else {
-      DOM.charImage.src = imagePath;
-    }
-    
+
+    // 重置回退标志
+    this._fallbackUsed = false;
+    this._currentGrayscale = grayscale;
+
+    // 设置 onload 回调（图片从网络加载完成时触发）
+    DOM.charImage.onload = () => {
+      DOM.charImage.classList.add('visible');
+    };
+
+    DOM.charImage.onerror = () => {
+      if (!this._fallbackUsed) {
+        this._fallbackUsed = true;
+        console.log(`Expression image not found: ${DOM.charImage.src}, using default`);
+        DOM.charImage.src = defaultPath;
+      } else {
+        console.error(`Default character image load failed: ${defaultPath}`);
+        DOM.charImage.classList.remove('visible');
+      }
+    };
+
+    // 决定使用哪张图片
+    const imagePath = (expression !== 'neutral' && expressionPath) ? expressionPath : defaultPath;
+    DOM.charImage.src = imagePath;
+    // 直接添加 visible 类（图片已在缓存中时 onload 不会触发）
     DOM.charImage.classList.add('visible');
-    
     DOM.charImage.style.filter = grayscale ? 'grayscale(100%)' : 'none';
   },
   
   hide() {
     if (DOM.charImage) {
       DOM.charImage.classList.remove('visible');
-      DOM.charImage.src = '';
+      DOM.charImage.onload = null;
+      DOM.charImage.onerror = null;
     }
   }
 };

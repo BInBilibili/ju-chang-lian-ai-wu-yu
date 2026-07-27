@@ -88,12 +88,13 @@ body {
 #char-canvas { position: absolute; inset: 0; z-index: 5; }
 
 .character-image {
-  position: absolute; bottom: 150px; left: 50%;
+  position: absolute; bottom: 0; left: 50%;
   transform: translateX(-50%);
   z-index: 5;
-  max-height: calc(100% - 150px);
+  height: 85%;
   max-width: 100%;
   object-fit: contain;
+  object-position: bottom center;
   display: none;
   image-rendering: auto;
   pointer-events: none;

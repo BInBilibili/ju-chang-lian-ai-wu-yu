@@ -7,7 +7,14 @@ const GameManager = {
     
     DOM.startBtn.addEventListener('click', () => this.startGame());
     DOM.restartBtn.addEventListener('click', () => this.restartGame());
-    DOM.dialogueBox.addEventListener('click', () => this.handleDialogueClick());
+    
+    // 点击页面任意位置继续对话（仅在对话场景生效）
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('button')) return;
+      if (DOM.dialogueBox.classList.contains('active')) {
+        this.handleDialogueClick();
+      }
+    });
     
     document.addEventListener('keydown', (e) => {
       if (e.code === 'Space' || e.code === 'Enter') {
